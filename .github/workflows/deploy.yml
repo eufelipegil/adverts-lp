@@ -1,0 +1,48 @@
+# A cada push na main: compila o Astro e publica o resultado (dist/) na branch "deploy".
+# O cPanel da StayCloud puxa essa branch e copia para o public_html (ver .cpanel.yml).
+name: Build e publicar na branch deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # IDs de rastreamento entram no build. Cadastre em Settings > Secrets and variables > Actions > Variables.
+      - run: npm run build
+        env:
+          PUBLIC_GA4_ID: ${{ vars.PUBLIC_GA4_ID }}
+          PUBLIC_GADS_ID: ${{ vars.PUBLIC_GADS_ID }}
+          PUBLIC_GADS_CONV_LABEL: ${{ vars.PUBLIC_GADS_CONV_LABEL }}
+          PUBLIC_META_PIXEL_ID: ${{ vars.PUBLIC_META_PIXEL_ID }}
+          PUBLIC_WIDZ_TRACK: ${{ vars.PUBLIC_WIDZ_TRACK }}
+
+      - name: Publicar dist/ na branch deploy
+        run: |
+          cp .cpanel.yml dist/.cpanel.yml
+          cd dist
+          git init -b deploy
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Deploy ${GITHUB_SHA::7}"
+          git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" deploy

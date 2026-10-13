@@ -1,0 +1,66 @@
+---
+// Faixa gigante com os nomes dos serviços, correndo em loop. A velocidade e o sentido
+// seguem a rolagem (scripts/premium.ts). Decorativa: os mesmos nomes estão nos cards logo abaixo.
+import { servicos } from '../data/servicos';
+
+const nomes = servicos.map((s) => s.titulo);
+---
+
+<div class="faixa" aria-hidden="true" data-faixa>
+  <div class="faixa__trilho" data-faixa-trilho>
+    {[0, 1].map(() => (
+      <div class="faixa__grupo">
+        {nomes.map((n, i) => (
+          <Fragment>
+            <span class:list={['faixa__item', { 'faixa__item--vazado': i % 2 === 1 }]}>{n}</span>
+            <span class="faixa__sep"></span>
+          </Fragment>
+        ))}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .faixa {
+    overflow: clip;
+    padding-block: var(--s-6);
+    margin-bottom: var(--s-11);
+    rotate: -2deg;
+    border-block: 1px solid var(--line);
+    background: var(--card);
+    width: 104%;
+    margin-left: -2%;
+  }
+  .faixa__trilho { display: flex; width: max-content; will-change: transform; }
+  .faixa__grupo { display: flex; align-items: center; flex: none; }
+  .faixa__item {
+    padding-inline: var(--s-8);
+    font-family: var(--font-title);
+    font-stretch: var(--display-stretch);
+    font-weight: 800;
+    font-size: clamp(40px, 7vw, 104px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--text);
+  }
+  .faixa__item--vazado {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--text);
+  }
+  .faixa__sep {
+    flex: none;
+    width: clamp(18px, 2.2vw, 30px);
+    aspect-ratio: 1;
+    background: var(--accent-2);
+    clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); /* hexágono da marca */
+  }
+  /* sem JS ou sem movimento: corre só por CSS (ou fica parada) */
+  .faixa__trilho { animation: faixa 40s linear infinite; }
+  :global(.faixa--js) .faixa__trilho { animation: none; }
+  @keyframes faixa { to { translate: -50% 0; } }
+  @media (prefers-reduced-motion: reduce) { .faixa__trilho { animation: none; } }
+  @media (max-width: 619px) { .faixa { margin-bottom: var(--s-9); padding-block: var(--s-4); } }
+</style>

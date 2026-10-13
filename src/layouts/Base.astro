@@ -1,0 +1,118 @@
+---
+import '@fontsource/poppins/latin-400.css';
+import '@fontsource/poppins/latin-500.css';
+import '@fontsource/poppins/latin-600.css';
+import '@fontsource/poppins/latin-700.css';
+import '@fontsource-variable/archivo/wdth.css';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import h1Font from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+import Tracking from '../components/Tracking.astro';
+import Schema from '../components/Schema.astro';
+import { meta, site } from '../data/site';
+
+interface Props {
+  /** título da aba; padrão: o da home */
+  title?: string;
+  description?: string;
+  /** caminho da página, para canonical e og:url */
+  path?: string;
+  /** fora do Google (bio, 404) */
+  noindex?: boolean;
+  /** JSON-LD da home (organização + FAQ) */
+  schema?: boolean;
+}
+
+const { title = meta.title, description = meta.description, path = '/', noindex = false, schema = false } = Astro.props;
+const canonical = new URL(path, site.url).href;
+const ogImage = new URL('/og-image.jpg', site.url).href;
+---
+
+<!doctype html>
+<html lang={meta.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
+    <link rel="preload" href={h1Font} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={site.nomeCurto} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={path === '/' ? meta.ogTitle : title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={meta.ogTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {schema && <Schema />}
+    <Tracking />
+
+    <!--
+      Liga o movimento antes da primeira pintura (evita piscar). Só com aba visível,
+      IntersectionObserver e sem prefers-reduced-motion. Se o script do corpo não
+      rodar em 2,5s, desliga o movimento para nada ficar escondido.
+    -->
+    <script is:inline>
+      (function (d) {
+        d.classList.add('js');
+        try {
+          if (document.visibilityState === 'hidden' || !('IntersectionObserver' in window)) return;
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          d.classList.add('motion');
+          setTimeout(function () { if (!window.__movimento) d.classList.remove('motion'); }, 2500);
+        } catch (e) {}
+      })(document.documentElement);
+    </script>
+  </head>
+  <body id="topo" data-tone="escuro">
+    <slot />
+
+    <script>
+      import '../scripts/premium';
+    </script>
+    <script>
+      // Tom da página: a seção que cruza o meio da tela define fundo e cores (tokens.css).
+      const tons = [...document.querySelectorAll<HTMLElement>('[data-tone]')].filter((el) => el !== document.body);
+      let agendado = false;
+      const atualizarTom = () => {
+        agendado = false;
+        const meio = window.innerHeight * 0.5;
+        let tom = 'escuro';
+        for (const el of tons) {
+          const r = el.getBoundingClientRect();
+          if (r.top <= meio && r.bottom > meio) { tom = el.dataset.tone || 'escuro'; break; }
+        }
+        if (document.body.dataset.tone !== tom) document.body.dataset.tone = tom;
+      };
+      const pedirTom = () => { if (!agendado) { agendado = true; requestAnimationFrame(atualizarTom); } };
+      window.addEventListener('scroll', pedirTom, { passive: true });
+      window.addEventListener('resize', pedirTom, { passive: true });
+      atualizarTom();
+    </script>
+
+    <script>
+      // Revelação ao rolar, que se repete: entra na tela → .is-in; sai por completo → volta ao início.
+      (window as unknown as { __movimento: boolean }).__movimento = true;
+      if (document.documentElement.classList.contains('motion')) {
+        const itens = document.querySelectorAll('[data-reveal]');
+        const entra = new IntersectionObserver(
+          (entries) => { for (const e of entries) if (e.isIntersecting) e.target.classList.add('is-in'); },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        const sai = new IntersectionObserver((entries) => {
+          for (const e of entries) if (!e.isIntersecting) e.target.classList.remove('is-in');
+        });
+        itens.forEach((el) => { entra.observe(el); sai.observe(el); });
+      }
+    </script>
+  </body>
+</html>

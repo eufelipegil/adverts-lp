@@ -1,0 +1,36 @@
+---
+// Crédito "criado pela widz": tipografia e cores fixas da marca widz (não usar tokens da Adverts).
+// Fundo escuro: "w" lima vibrante e "idz" bone.
+---
+
+<div class="widz-credit">
+  <span>criado pela</span>
+  <a class="widz-mark" href="https://www.widz.com.br" target="_blank" rel="noopener" aria-label="widz (abre em nova aba)"><span class="w">w</span><span class="rest">idz</span></a>
+</div>
+
+<style>
+  .widz-credit {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--muted); /* discreto, mas com bom contraste no marinho */
+  }
+  .widz-mark {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 700;
+    letter-spacing: .2px;
+    text-decoration: none;
+    transition: opacity .2s ease;
+  }
+  .widz-mark:hover { opacity: .85; }
+  .widz-mark .w { color: #C6FF00; }
+  .widz-mark .rest { color: #F5F5F3; }
+</style>

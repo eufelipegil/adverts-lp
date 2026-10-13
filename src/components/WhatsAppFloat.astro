@@ -1,0 +1,144 @@
+---
+// Botão flutuante (padrão Widz): círculo marinho com o símbolo AD, selo verde do WhatsApp
+// e uma pílula que abre em linha reta depois de 1,5 s com a página parada.
+// Aparece depois de ~480 px de rolagem e some com o rodapé na tela ou o menu do celular aberto.
+import Logo from './Logo.astro';
+import { ctas } from '../data/ctas';
+import { waLink } from '../lib/whatsapp';
+---
+
+<a
+  class="flutua js-whatsapp"
+  data-local="flutuante"
+  data-cta="cta_flutuante"
+  href={waLink('cta_flutuante')}
+  target="_blank"
+  rel="noopener"
+  aria-label={ctas.cta_flutuante.texto}
+  data-flutua
+>
+  <span class="rot" aria-hidden="true">{ctas.cta_header.texto}</span>
+  <span class="bola" aria-hidden="true">
+    <Logo variante="simbolo" class="bola__ad" />
+    <span class="zap">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-1 1.2-.4.2-.7.1a8.2 8.2 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.5.3-.5a.6.6 0 0 0 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.4 13.4 0 0 0 5.2 4.6c1.9.8 2.7.9 3.6.7a3.1 3.1 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.4ZM12 21.8a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4a9.8 9.8 0 1 1 8.3 4.6Zm8.4-18.2A11.8 11.8 0 0 0 1.8 17.8L.1 24l6.4-1.7a11.8 11.8 0 0 0 5.6 1.4 11.8 11.8 0 0 0 8.3-20.1Z"/></svg>
+    </span>
+  </span>
+</a>
+
+<script>
+  const fl = document.querySelector<HTMLElement>('[data-flutua]');
+  const rodape = document.querySelector('.footer');
+  if (fl) {
+    let parado: number | undefined;
+    const atualiza = () => {
+      const noRodape = !!rodape && rodape.getBoundingClientRect().top < window.innerHeight - 40;
+      fl.classList.toggle('on', window.scrollY > 480 && !noRodape);
+    };
+    // pílula: recolhe ao rolar, abre depois de 1,5 s parado
+    const repouso = () => {
+      fl.classList.remove('fala');
+      clearTimeout(parado);
+      parado = window.setTimeout(() => { if (fl.classList.contains('on')) fl.classList.add('fala'); }, 1500);
+    };
+    atualiza();
+    window.addEventListener('scroll', () => { atualiza(); repouso(); }, { passive: true });
+  }
+</script>
+
+<style>
+  .flutua {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: opacity .3s, transform .3s;
+  }
+  :global(.js) .flutua { opacity: 0; transform: translateY(12px); pointer-events: none; }
+  :global(.js) .flutua.on { opacity: 1; transform: none; pointer-events: auto; }
+  :global(html.menu-aberto) .flutua { opacity: 0 !important; pointer-events: none !important; }
+
+  /* pílula por baixo do círculo, revelada por clip-path; a borda direita passa do centro do círculo */
+  .rot {
+    position: relative;
+    z-index: 1;
+    margin-right: -54px;
+    padding: 12px 68px 12px 22px;
+    border-radius: 999px;
+    background: var(--brand-white);
+    color: #050B1A;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 14px 30px -14px rgba(0, 0, 0, .55);
+    clip-path: inset(-30px 0 -30px 100%);
+    transition: clip-path .8s cubic-bezier(.45, .05, .25, 1);
+    pointer-events: none;
+  }
+  .flutua.fala .rot,
+  .flutua:hover .rot,
+  .flutua:focus-visible .rot {
+    clip-path: inset(-30px 0 -30px -30px);
+    transition: clip-path 1.2s cubic-bezier(.45, .05, .25, 1);
+  }
+
+  .bola {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(120% 120% at 30% 20%, #1A2B5C, #050B1A 70%);
+    color: var(--brand-white);
+    box-shadow:
+      0 0 0 3px var(--brand-white),
+      0 0 0 4.5px var(--brand-yellow),
+      0 16px 32px -12px rgba(0, 0, 0, .8);
+    transition: transform .25s var(--ease-out-quart);
+  }
+  .flutua:hover .bola { transform: translateY(-2px) rotate(-6deg); }
+  .bola::after {
+    content: '';
+    position: absolute;
+    inset: -4.5px;
+    border-radius: 50%;
+    border: 2px solid var(--brand-yellow);
+    opacity: 0;
+    animation: pulso 3.6s ease-out infinite;
+  }
+  @keyframes pulso {
+    0%, 70% { opacity: 0; transform: scale(1); }
+    78% { opacity: .7; }
+    100% { opacity: 0; transform: scale(1.5); }
+  }
+  .bola :global(.bola__ad) { width: 34px; height: auto; }
+  .zap {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    display: grid;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: var(--wa);
+    border: 2px solid var(--brand-white);
+    color: var(--brand-white);
+  }
+  .zap svg { width: 13px; height: 13px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bola::after { animation: none; }
+    .rot, .flutua.fala .rot, .flutua:hover .rot { transition: none; }
+  }
+  @media (max-width: 620px) {
+    .flutua { right: 16px; bottom: 16px; }
+    .rot { font-size: 13.5px; padding: 11px 66px 11px 18px; margin-right: -52px; }
+    .bola { width: 56px; height: 56px; }
+  }
+</style>

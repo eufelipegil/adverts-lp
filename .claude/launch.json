@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "adverts-dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "4411"], "port": 4411 },
+    { "name": "adverts-preview", "runtimeExecutable": "npm", "runtimeArgs": ["run", "preview", "--", "--port", "4412"], "port": 4412 }
+  ]
+}

@@ -1,0 +1,106 @@
+---
+import Words from './Words.astro';
+import Faixa from './Faixa.astro';
+import { servicos } from '../data/servicos';
+---
+
+<section id="servicos" class="section section--junto" aria-labelledby="servicos-titulo" data-tone="claro">
+  <Faixa />
+  <div class="container">
+    <div class="servicos__head">
+      <div>
+        <p class="label" data-reveal="label">O que fazemos</p>
+        <h2 id="servicos-titulo" data-reveal="words"><Words text="Tudo o que acontece entre o anúncio e o contrato assinado." /></h2>
+      </div>
+      <p class="servicos__apoio" data-reveal="up" style="--d0:320ms">Anúncio sozinho não fecha venda. Por isso cuidamos do caminho inteiro, do primeiro clique até o lead chegar pronto na mão do seu vendedor.</p>
+    </div>
+
+    <ul class="servicos__grid">
+      {servicos.map((s, i) => (
+        <li class:list={['card', 'servico', 'spot', { 'servico--destaque': s.carroChefe }]} data-reveal="up" style={`--i:${i}`}>
+          {s.carroChefe && <span class="servico__tag">Carro-chefe</span>}
+          <span class="servico__num">{s.numero}</span>
+          <h3>{s.titulo}</h3>
+          <p>{s.texto}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .servicos__head {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--s-6) var(--s-10);
+    align-items: end;
+  }
+  .servicos__head h2 { margin-top: var(--s-4); }
+  .servicos__apoio { font-size: 18px; color: var(--muted); }
+
+  .servicos__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-5);
+    margin-top: var(--s-10);
+  }
+  .servico {
+    position: relative;
+    transition: transform .35s var(--ease-out-quart), border-color .35s ease;
+  }
+  /* entrada (com atraso da sequência) + hover (sem atraso) na mesma lista */
+  :global(.motion) .servico {
+    transition:
+      opacity .72s var(--ease-out-quart) var(--delay),
+      translate .9s var(--ease-out-expo) var(--delay),
+      transform .35s var(--ease-out-quart),
+      border-color .35s ease;
+  }
+  .servico__tag { transition: scale .5s var(--ease-out-expo) calc(var(--i, 0) * var(--stagger) + 300ms); }
+  :global(.motion) .servico:not(:global(.is-in)) .servico__tag { scale: 0; }
+  .servico--destaque {
+    border-color: var(--line-2);
+    background: linear-gradient(160deg, var(--card-2), var(--featured-to));
+  }
+  .servico__tag {
+    position: absolute;
+    top: var(--s-5);
+    right: var(--s-5);
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    background: var(--accent-2);
+    color: var(--wa-ink);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .servico__num {
+    display: block;
+    margin-bottom: var(--s-6);
+    font-family: var(--font-title);
+    font-stretch: var(--display-stretch);
+    font-size: 56px;
+    font-weight: 800;
+    line-height: .9;
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--num-ink);
+    transition: color .4s ease;
+  }
+  .servico:hover .servico__num { color: var(--num-ink); }
+  /* cor por tom da página: ver --num-ink em tokens.css */
+  .servico--destaque .servico__num { color: var(--num-ink-destaque); }
+
+  @media (hover: hover) and (min-width: 960px) {
+    .servico:hover { transform: translateY(-3px); border-color: var(--line-2); }
+  }
+  @media (max-width: 959px) {
+    .servicos__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 619px) {
+    .servicos__head { grid-template-columns: 1fr; }
+    .servicos__grid { grid-template-columns: 1fr; }
+  }
+</style>

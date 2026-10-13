@@ -1,0 +1,27 @@
+---
+import Icon from './Icon.astro';
+import { ctas, type CtaId } from '../data/ctas';
+import { waLink } from '../lib/whatsapp';
+
+interface Props {
+  ctaId: CtaId;
+  variante?: 'primario' | 'compacto';
+  class?: string;
+  /** atributos extras (ex.: data-reveal, style) */
+  [atributo: string]: unknown;
+}
+
+const { ctaId, variante = 'primario', class: className, ...resto } = Astro.props;
+---
+
+<a
+  href={waLink(ctaId)}
+  data-cta={ctaId}
+  target="_blank"
+  rel="noopener"
+  class:list={['btn', 'btn--wa', variante === 'compacto' && 'btn--compact', className]}
+  {...resto}
+>
+  <Icon name="whatsapp" />
+  <span>{ctas[ctaId].texto}</span>
+</a>

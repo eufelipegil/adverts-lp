@@ -1,0 +1,307 @@
+/* Base global. Cores e fontes sempre via tokens.css. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  overflow-x: clip; /* entradas laterais (translate) nunca criam rolagem horizontal */
+  -webkit-text-size-adjust: 100%;
+  interpolate-size: allow-keywords; /* permite animar a abertura do FAQ até height: auto */
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + var(--s-4));
+}
+
+main { overflow-x: clip; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  /* troca de tom ao rolar (ver tokens.css) */
+  transition: --bg .6s var(--tone-ease), --text .6s var(--tone-ease), --muted .6s var(--tone-ease), --line .6s var(--tone-ease), --line-2 .6s var(--tone-ease), --card .6s var(--tone-ease), --card-2 .6s var(--tone-ease);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3 { font-family: var(--font-title); font-stretch: var(--title-stretch); font-weight: 800; color: var(--text); text-wrap: balance; }
+h1 { text-wrap: pretty; font-size: var(--fs-h1); line-height: 1.02; letter-spacing: -0.035em; }
+h2 { font-size: var(--fs-h2); line-height: 1.04; letter-spacing: -0.035em; }
+h3 { font-size: var(--fs-h3); line-height: 1.15; letter-spacing: -0.015em; font-weight: 700; font-stretch: 108%; }
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(var(--maxw) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section { padding-block: var(--section-y); }
+/* Seções agrupadas em pares de mesmo tom: a segunda cola na primeira, sem somar o respiro duas vezes */
+.section--junto { padding-top: 0; }
+
+/* Rótulo acima dos H2 */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--label-ink);
+}
+.label::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 12px var(--accent-2);
+}
+
+.lead { font-size: var(--fs-lead); line-height: 1.6; color: var(--muted); }
+.micro { font-size: var(--fs-micro); font-weight: 500; line-height: 1.5; color: var(--muted); }
+
+/* Destaque em azul da marca: segunda frase do H1, número do case e segunda frase do H2 final */
+.grad-text { color: var(--accent); }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Botões */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 17px 30px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .25s var(--ease-out-quart), box-shadow .25s var(--ease-out-quart), border-color .2s ease, color .2s ease, background-color .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: translateY(0) scale(.97); transition-duration: .1s; }
+.btn svg { flex: none; width: 22px; height: 22px; }
+
+.btn--wa {
+  background: var(--wa);
+  color: var(--wa-ink);
+  box-shadow: var(--shadow-wa);
+}
+.btn--wa:hover { transform: translateY(-2px); box-shadow: var(--shadow-wa-hover); }
+.btn--wa svg { transition: transform .35s var(--ease-out-expo); }
+.btn--wa:hover svg { transform: rotate(-8deg) scale(1.08); }
+
+.btn--compact { padding: 11px 20px; font-size: 15px; min-height: 44px; }
+.btn--compact svg { width: 18px; height: 18px; }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+.btn--ghost:hover { border-color: var(--muted); transform: translateY(-2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Cabeçalho de seção: rótulo, H2 e texto de apoio */
+.section-head { max-width: 760px; }
+.section-head h2 { margin-top: var(--s-4); }
+.section-head p:not(.label) { margin-top: var(--s-5); font-size: 18px; color: var(--muted); }
+.section-head--center { margin-inline: auto; text-align: center; }
+.section-head--center .label { justify-content: center; }
+
+/* Card padrão */
+.card {
+  padding: var(--s-7);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--card);
+}
+.card h3 + p { margin-top: var(--s-3); }
+.card p { font-size: var(--fs-card); color: var(--muted); }
+
+.icon-box {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--icon-from), var(--icon-to));
+  color: var(--icon-ink);
+}
+
+/* =====================================================================
+   Movimento ao rolar
+   - Só existe com a classe .motion no <html> (posta no <head> quando há JS,
+     aba visível e sem prefers-reduced-motion). Sem ela, tudo fica visível e parado.
+   - [data-reveal] recebe .is-in ao entrar na tela e perde ao sair por completo,
+     então a animação se repete toda vez que a seção volta (script em Base.astro).
+   - Usa translate/scale (propriedades individuais) para não brigar com o
+     transform dos estados de hover.
+   - --i: posição na sequência (stagger). --d0: atraso extra do elemento.
+   ===================================================================== */
+.motion [data-reveal] {
+  --delay: calc(var(--i, 0) * var(--stagger) + var(--d0, 0ms));
+  transition:
+    opacity calc(var(--reveal-dur) * .8) var(--ease-out-quart) var(--delay),
+    translate var(--reveal-dur) var(--ease-out-expo) var(--delay),
+    scale var(--reveal-dur) var(--ease-out-expo) var(--delay),
+    clip-path 1.1s var(--ease-out-expo) var(--delay),
+    filter var(--reveal-dur) var(--ease-out-quart) var(--delay);
+}
+.motion [data-reveal='up']:not(.is-in)    { opacity: 0; translate: 0 28px; }
+.motion [data-reveal='left']:not(.is-in)  { opacity: 0; translate: -40px 0; }
+.motion [data-reveal='right']:not(.is-in) { opacity: 0; translate: 40px 0; }
+.motion [data-reveal='scale']:not(.is-in) { opacity: 0; scale: .95; filter: blur(8px); }
+
+/* Botões com entrada: mantém as transições de hover/toque junto das de entrada */
+.motion .btn[data-reveal] {
+  transition:
+    opacity calc(var(--reveal-dur) * .8) var(--ease-out-quart) var(--delay),
+    translate var(--reveal-dur) var(--ease-out-expo) var(--delay),
+    transform .25s var(--ease-out-quart),
+    box-shadow .25s var(--ease-out-quart);
+}
+
+/* Rótulo: o ponto acende e o texto desliza */
+.motion [data-reveal='label']:not(.is-in) { opacity: 0; translate: -12px 0; }
+.motion [data-reveal='label']::before { transition: scale .6s var(--ease-out-expo) calc(var(--delay) + 120ms), box-shadow .8s ease calc(var(--delay) + 120ms); }
+.motion [data-reveal='label']:not(.is-in)::before { scale: 0; box-shadow: 0 0 0 transparent; }
+
+/* Títulos palavra por palavra, subindo de dentro de uma máscara (ver Words.astro) */
+.w {
+  display: inline-block;
+  overflow: clip;
+  vertical-align: bottom;
+  /* folga para acentos e descendentes não serem cortados pela máscara */
+  padding: .12em .02em .16em;
+  margin: -.12em -.02em -.16em;
+}
+.w > span { display: inline-block; }
+.motion [data-reveal='words'] .w > span {
+  transition:
+    translate 1s var(--ease-out-expo) calc(var(--wi, 0) * 35ms + var(--d0, 0ms)),
+    opacity .6s var(--ease-out-quart) calc(var(--wi, 0) * 35ms + var(--d0, 0ms));
+}
+.motion [data-reveal='words']:not(.is-in) .w > span { translate: 0 110%; opacity: 0; }
+
+/* =====================================================================
+   Camada premium (scripts/premium.ts)
+   ===================================================================== */
+
+/* Lenis: rolagem suave assume no lugar do scroll-behavior do navegador */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* Granulado de filme por cima de tudo: tira o "liso de tela" dos fundos chapados */
+body::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  z-index: 200;
+  pointer-events: none;
+  opacity: .06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grao 1.2s steps(4) infinite;
+}
+body[data-tone='claro']::after { opacity: .045; }
+@keyframes grao {
+  0% { translate: 0 0; } 25% { translate: -3% 2%; } 50% { translate: 2% -3%; } 75% { translate: -2% -1%; } 100% { translate: 0 0; }
+}
+
+/* Barra de progresso da leitura, colada no topo */
+.progresso {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 120;
+  height: 2px;
+  background: linear-gradient(90deg, var(--brand-blue), var(--brand-yellow));
+  transform-origin: 0 50%;
+  scale: 0 1;
+  pointer-events: none;
+}
+
+/* Entrada por cortina (fotos do mosaico): a imagem sobe de dentro de uma máscara */
+.motion [data-reveal='clip'] {
+  transition: clip-path 1.2s var(--ease-out-expo) var(--delay), opacity .4s ease var(--delay);
+}
+.motion [data-reveal='clip']:not(.is-in) { clip-path: inset(100% 0 0 0 round var(--r-card)); }
+.motion [data-reveal='clip'].is-in { clip-path: inset(0 0 0 0 round var(--r-card)); }
+
+/* Brilho que segue o cursor nos cards (--mx/--my vêm do script) */
+.spot { position: relative; overflow: hidden; }
+.spot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--spot-fill), transparent 45%);
+  transition: opacity .4s ease;
+}
+.spot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), var(--spot-edge), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  transition: opacity .4s ease;
+}
+@media (hover: hover) {
+  .spot:hover::after, .spot:hover::before { opacity: 1; }
+}
+:root, .surface-dark { --spot-fill: rgba(0, 140, 220, .16); --spot-edge: rgba(253, 185, 19, .9); }
+body[data-tone='claro'] { --spot-fill: rgba(0, 140, 220, .09); --spot-edge: rgba(0, 140, 220, .8); }
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
+}

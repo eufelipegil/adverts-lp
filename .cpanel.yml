@@ -1,0 +1,9 @@
+---
+# Roda no cPanel (Git Version Control > Deploy HEAD Commit), na branch "deploy".
+# A branch "deploy" já contém o site compilado na raiz (gerado pelo GitHub Actions).
+# Só copia por cima: não apaga nada do public_html (.well-known, etc.).
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/CPANEL_USER/public_html/
+    - /bin/cp -Rf ./* $DEPLOYPATH
+    - /bin/cp -f ./.htaccess $DEPLOYPATH

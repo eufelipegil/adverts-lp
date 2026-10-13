@@ -1,0 +1,162 @@
+---
+import { Picture } from 'astro:assets';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Words from './Words.astro';
+import { projetos } from '../data/projetos';
+
+const fotos = import.meta.glob<{ default: ImageMetadata }>('../assets/projetos/*.{jpg,jpeg,png,webp}', { eager: true });
+const foto = (n: number) => {
+  const nome = String(n).padStart(2, '0');
+  const achado = Object.entries(fotos).find(([caminho]) => new RegExp(`/${nome}\\.[a-z]+$`).test(caminho));
+  return achado?.[1].default;
+};
+// Vídeos ficam em public/projetos/ (não passam pelo otimizador de imagens)
+const videoN = (n: number) => projetos.filter((p) => p.tipo === 'video').findIndex((p) => p.n === n) + 1;
+// caminho a partir da raiz do projeto: import.meta.url aponta para outro lugar no build
+const temArquivo = (nome: string) => existsSync(join(process.cwd(), 'public', 'projetos', nome));
+
+const espacos = projetos.map((p) => {
+  const v = p.tipo === 'video' ? videoN(p.n) : 0;
+  return {
+    ...p,
+    imagem: p.tipo === 'foto' ? foto(p.n) : undefined,
+    video: v && temArquivo(`video-${v}.mp4`) ? `/projetos/video-${v}.mp4` : undefined,
+    capa: v && temArquivo(`video-${v}.jpg`) ? `/projetos/video-${v}.jpg` : undefined,
+  };
+});
+const sizes = (f: string) => (f === 'vertical' ? '(max-width: 959px) 50vw, 25vw' : '(max-width: 959px) 100vw, 50vw');
+const larguras = (f: string) => (f === 'vertical' ? [320, 480, 700] : [480, 800, 1200]);
+---
+
+<section id="projetos" class="section section--junto" aria-labelledby="projetos-titulo" data-tone="claro">
+  <div class="container">
+    <div class="section-head">
+      <p class="label" data-reveal="label">Projetos</p>
+      <h2 id="projetos-titulo" data-reveal="words"><Words text="Nosso trabalho em imagens." /></h2>
+    </div>
+
+    <div class="mosaico">
+      <ul class="mosaico__grade">
+        {espacos.map((e, i) => (
+          <li
+            class={`tile tile--${e.formato}`}
+            data-parallax
+            style={`--col:${e.col};--linha:${e.linha};--delay:${(i % 4) * 80}ms`}
+          >
+            {e.imagem && (
+              <Picture
+                src={e.imagem}
+                alt={e.alt}
+                widths={larguras(e.formato)}
+                sizes={sizes(e.formato)}
+                formats={['avif', 'webp']}
+                fallbackFormat="jpg"
+                quality={78}
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+            {e.video && (
+              <video
+                src={e.video}
+                poster={e.capa}
+                muted
+                loop
+                playsinline
+                preload="none"
+                aria-hidden="true"
+                tabindex="-1"
+                data-mosaico-video
+              ></video>
+            )}
+            {!e.imagem && !e.video && import.meta.env.DEV && (
+              <span class="tile__vazio">{e.tipo === 'video' ? `vídeo ${videoN(e.n)}` : `foto ${String(e.n).padStart(2, '0')}`}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Vídeos do mosaico: tocam mudos só enquanto estão na tela. Com movimento reduzido, ficam parados na capa.
+  const reduzido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const videos = document.querySelectorAll<HTMLVideoElement>('[data-mosaico-video]');
+  if (!reduzido && videos.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const v = e.target as HTMLVideoElement;
+          if (e.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        }
+      },
+      { threshold: 0.4 },
+    );
+    videos.forEach((v) => io.observe(v));
+  }
+</script>
+
+<style>
+  .mosaico { container-type: inline-size; margin-top: var(--s-10); }
+  .mosaico__grade {
+    --gap: var(--s-3);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* altura de uma linha = largura de uma coluna x 1,4 (proporção 5:7 das fotos verticais) */
+    grid-auto-rows: calc((100cqw - 3 * var(--gap)) / 4 * 1.4);
+    gap: var(--gap);
+  }
+  .tile {
+    grid-column: var(--col);
+    grid-row: var(--linha);
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r-card);
+    background: linear-gradient(160deg, var(--avatar-from, #161616), var(--avatar-to, #0A0A0A));
+    border: 1px solid var(--line);
+  }
+  .tile :global(picture),
+  .tile :global(img),
+  .tile video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* zoom leve no hover (o script cuida do deslocamento ao rolar, via transform) */
+  .tile :global(img), .tile video { transition: scale 1.2s var(--ease-out-expo); }
+  @media (hover: hover) {
+    .tile { transition: scale .6s var(--ease-out-expo), box-shadow .6s var(--ease-out-expo); }
+    .tile:hover { z-index: 2; scale: 1.035; box-shadow: 0 30px 60px -25px rgba(0, 0, 0, .55); }
+    .tile:hover :global(img), .tile:hover video { scale: 1.05; }
+  }
+  .tile__vazio {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  @media (max-width: 959px) {
+    /* celular/tablet: 2 colunas, os blocos se encaixam sozinhos */
+    .mosaico__grade {
+      --gap: var(--s-2);
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: calc((100cqw - var(--gap)) / 2 * 1.4);
+      grid-auto-flow: dense;
+    }
+    .tile { grid-column: auto; grid-row: auto; }
+    .tile--grande { grid-column: span 2; grid-row: span 2; }
+    .tile--largo { grid-column: span 2; grid-row: span 1; }
+    .tile--vertical { grid-column: span 1; }
+    .tile--largo { grid-row: span 1; }
+  }
+</style>

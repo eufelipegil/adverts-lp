@@ -1,0 +1,318 @@
+---
+import WhatsAppButton from './WhatsAppButton.astro';
+import Logo from './Logo.astro';
+
+// Formato do topo (vale para desktop e celular):
+//   'pilula' → barra flutuante arredondada, centralizada na largura do conteúdo
+//   'cheio'  → barra de ponta a ponta, colada no topo
+const TOPO: 'pilula' | 'cheio' = 'cheio';
+
+const menu = [
+  { href: '/#servicos', texto: 'O que fazemos' },
+  { href: '/#resultados', texto: 'Resultados' },
+  { href: '/#como-funciona', texto: 'Como funciona' },
+  { href: '/#duvidas', texto: 'Dúvidas' },
+];
+---
+
+<header class:list={['header', `header--${TOPO}`]} data-header>
+  <div class="container header__inner">
+    <div class="header__bar">
+      <a href="/#topo" class="logo" aria-label="Adverts, voltar ao topo"><Logo variante="simbolo" class="logo__svg" /></a>
+
+      <nav class="nav" aria-label="Principal">
+        <ul>
+          {menu.map((item) => (
+            <li><a href={item.href}>{item.texto}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <WhatsAppButton ctaId="cta_header" variante="compacto" class="header__cta" />
+
+      <button
+        type="button"
+        class="menu-btn"
+        aria-expanded="false"
+        aria-controls="menu-mobile"
+        aria-label="Abrir menu"
+        data-menu-btn
+      >
+        <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+
+    <!-- Menu do celular: só existe abaixo de 860px e fica fora da árvore de acessibilidade quando fechado -->
+    <div id="menu-mobile" class="menu" hidden data-menu>
+      <nav aria-label="Principal no celular">
+        <ul>
+          {menu.map((item) => (
+            <li><a href={item.href} data-menu-link>{item.texto}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <WhatsAppButton ctaId="cta_header" class="menu__cta" />
+    </div>
+  </div>
+</header>
+
+<!-- Véu do menu no celular: desfoca a página por trás; tocar nele fecha o menu -->
+<div class="menu-veu" aria-hidden="true"></div>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const btn = document.querySelector<HTMLButtonElement>('[data-menu-btn]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+
+  if (header && btn && menu) {
+    const setOpen = (open: boolean, focusBtn = false) => {
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+      header.classList.toggle('is-open', open);
+      document.documentElement.classList.toggle('menu-aberto', open);
+      if (open) {
+        menu.hidden = false;
+        requestAnimationFrame(() => menu.classList.add('is-visible'));
+      } else {
+        menu.classList.remove('is-visible');
+        setTimeout(() => { if (!header.classList.contains('is-open')) menu.hidden = true; }, 220);
+      }
+      if (focusBtn) btn.focus();
+    };
+
+    btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('[data-menu-link], [data-cta]')) setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && header.classList.contains('is-open')) setOpen(false, true);
+    });
+    document.addEventListener('click', (e) => {
+      if (header.classList.contains('is-open') && !header.contains(e.target as Node)) setOpen(false);
+    });
+    matchMedia('(min-width: 860px)').addEventListener('change', (e) => { if (e.matches) setOpen(false); });
+  }
+</script>
+
+<style>
+  /*
+    O topo flutua sobre a primeira dobra (margem negativa), para o vidro mostrar
+    o conteúdo passando por baixo. A hero compensa com --header-h no padding.
+  */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    margin-bottom: calc(var(--header-h) * -1);
+  }
+  .header__inner { position: relative; height: 100%; }
+  .header__bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-6);
+  }
+
+  /* ---------- Liquid glass: preenchimento translúcido, desfoque com saturação, borda com reflexo e brilho ---------- */
+  .glass,
+  .header--pilula .header__bar,
+  .header--cheio::before,
+  .menu {
+    isolation: isolate;
+    background: var(--glass-fill), var(--glass-tint);
+    -webkit-backdrop-filter: blur(18px) saturate(180%) brightness(1.08);
+    backdrop-filter: blur(18px) saturate(180%) brightness(1.08);
+  }
+  .header--pilula .header__bar,
+  .menu {
+    position: relative;
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      inset 0 1px 0 var(--glass-edge),
+      inset 0 -1px 0 var(--glass-edge-soft),
+      inset 0 0 18px var(--glass-edge-soft),
+      var(--glass-shadow);
+  }
+  .header--pilula .header__bar::before,
+  .menu::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--glass-shine);
+    pointer-events: none;
+  }
+
+  /*
+    Variante "cheio": a barra inteira é o vidro, com reflexo na borda de baixo.
+    O vidro fica num pseudo-elemento: se o próprio <header> tivesse backdrop-filter,
+    o painel do menu (filho dele) não conseguiria desfocar a página por baixo.
+  */
+  .header--cheio::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: inset 0 -1px 0 var(--glass-edge-soft), var(--glass-bar-shadow);
+    pointer-events: none;
+  }
+
+  /* Variante "pílula": barra flutuante arredondada */
+  .header--pilula { padding-top: 12px; }
+  .header--pilula .header__inner { height: 60px; }
+  .header--pilula .header__bar {
+    padding: 0 8px 0 22px;
+    border-radius: var(--r-pill);
+  }
+
+  .logo { display: block; color: var(--text); }
+  .logo :global(.logo__svg) { display: block; width: auto; height: 40px; }
+  .header--pilula .logo :global(.logo__svg) { height: 34px; }
+
+  .nav ul { display: flex; gap: var(--s-8); }
+  .nav a {
+    position: relative;
+    display: inline-block;
+    padding-block: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color .2s ease;
+  }
+  /* sublinhado que corre da esquerda no hover */
+  .nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    scale: 0 1;
+    transform-origin: right;
+    transition: scale .35s var(--ease-out-expo);
+  }
+  .nav a:hover { color: var(--text); }
+  .nav a:hover::after { scale: 1 1; transform-origin: left; }
+
+  .menu-btn, .menu, .menu-veu { display: none; }
+
+  /* "cheio" vai de ponta a ponta no desktop; "pílula" fica na largura do conteúdo */
+  @media (min-width: 1024px) {
+    .header--cheio .header__inner.container { max-width: none; padding-inline: 32px; }
+  }
+
+  /* ---------- celular: menu hambúrguer (formato segue TOPO) ---------- */
+  @media (max-width: 859px) {
+    .nav, .header :global(.header__cta) { display: none; }
+    .logo :global(.logo__svg),
+    .header--pilula .logo :global(.logo__svg) { height: 30px; }
+    .logo { padding-block: 7px; margin-block: -7px; } /* toque de 44px sem mudar a altura do topo */
+
+    /* "cheio": a barra inteira é o vidro, com o menu encaixado logo abaixo */
+    .header--cheio .header__bar { padding-right: 0; }
+
+    /* "pílula": barra flutuante arredondada */
+    .header--pilula { padding-top: 10px; }
+    .header--pilula .header__inner { height: 56px; padding-inline: 12px; }
+    .header--pilula .header__bar { padding: 0 6px 0 16px; }
+
+    .menu-btn {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: background .2s ease;
+    }
+    .menu-btn:active { background: var(--glass-press); }
+    .menu-btn__bars { position: relative; width: 20px; height: 14px; }
+    .menu-btn__bars span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+      transition: transform .25s ease, opacity .2s ease, top .25s ease;
+    }
+    .menu-btn__bars span:nth-child(1) { top: 0; }
+    .menu-btn__bars span:nth-child(2) { top: 6px; }
+    .menu-btn__bars span:nth-child(3) { top: 12px; }
+    .is-open .menu-btn__bars span:nth-child(1) { top: 6px; transform: rotate(45deg); }
+    .is-open .menu-btn__bars span:nth-child(2) { opacity: 0; }
+    .is-open .menu-btn__bars span:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+    .menu {
+      display: block;
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 12px;
+      right: 12px;
+      padding: var(--s-3) var(--s-3) var(--s-4);
+      border-radius: 28px;
+      background: var(--glass-fill), var(--glass-tint-strong);
+      opacity: 0;
+      transform: translateY(-8px) scale(.97);
+      transform-origin: top right;
+      transition: opacity .2s ease, transform .22s ease;
+    }
+    .header--cheio .menu {
+      top: 100%;
+      left: 0;
+      right: 0;
+      padding: var(--s-2) var(--gutter) var(--s-5);
+      border-width: 0 0 1px;
+      border-radius: 0 0 28px 28px;
+      box-shadow: inset 0 -1px 0 var(--glass-edge-soft), var(--glass-shadow);
+    }
+    .header--cheio .menu::before { display: none; }
+    .menu[hidden] { display: none; }
+
+    /* Véu: logo abaixo do topo (z-index 50), cobre a página inteira */
+    .menu-veu {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 49;
+      background: var(--veu-tint);
+      -webkit-backdrop-filter: blur(12px) saturate(120%);
+      backdrop-filter: blur(12px) saturate(120%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .3s var(--ease-out-quart), visibility 0s linear .3s;
+    }
+    .header.is-open + .menu-veu {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity .3s var(--ease-out-quart), visibility 0s;
+    }
+    :global(html.menu-aberto) { overflow: hidden; }
+    .menu.is-visible { opacity: 1; transform: none; }
+
+    .menu ul { display: grid; }
+    .menu li + li { border-top: 1px solid var(--glass-edge-soft); }
+    .menu a[data-menu-link] {
+      display: block;
+      padding: 15px 14px;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .menu a[data-menu-link]:active { background: var(--glass-press); }
+    .menu :global(.menu__cta) { width: 100%; margin-top: var(--s-3); }
+  }
+</style>

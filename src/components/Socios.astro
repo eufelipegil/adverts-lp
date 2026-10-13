@@ -1,0 +1,211 @@
+---
+import { Picture } from 'astro:assets';
+import Words from './Words.astro';
+import Logo from './Logo.astro';
+import { socios } from '../data/socios';
+
+const iniciais = (nome: string) =>
+  nome.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+---
+
+<section id="socios" class="section" aria-labelledby="socios-titulo" data-tone="claro">
+  <div class="container">
+    <div class="section-head">
+      <p class="label" data-reveal="label">Quem está por trás</p>
+      <h2 id="socios-titulo" data-reveal="words"><Words text="Quatro sócios. Tecnologia, tráfego e vendas de software na mesma mesa." /></h2>
+    </div>
+
+    <ul class="socios__grid">
+      {socios.map((s, i) => (
+        <li class="socio" data-reveal="socio" style={`--i:${i}`}>
+          <!-- Card que vira: frente com a foto; verso azul com nome e descrição (hover, foco ou toque) -->
+          <div class="socio__card" tabindex="0" data-socio-card>
+            <div class="socio__giro">
+              <div class="socio__face socio__foto">
+                {s.foto ? (
+                  <Picture src={s.foto} alt="" width={600} height={750} widths={[300, 450, 600]} sizes="(max-width: 959px) 45vw, 300px" formats={['avif', 'webp']} fallbackFormat="jpg" quality={80} loading="lazy" decoding="async" />
+                ) : (
+                  <span aria-hidden="true">{iniciais(s.nome)}</span>
+                )}
+              </div>
+              <div class="socio__face socio__verso">
+                <Logo variante="simbolo" class="socio__verso-logo" />
+                <span class="socio__hex socio__hex--red" aria-hidden="true"></span>
+                <span class="socio__hex socio__hex--blue" aria-hidden="true"></span>
+                <span class="socio__hex socio__hex--green" aria-hidden="true"></span>
+                <span class="socio__hex socio__hex--yellow" aria-hidden="true"></span>
+                <p class="socio__verso-nome" aria-hidden="true">{s.nome}</p>
+                <p class="socio__verso-funcao" aria-hidden="true">{s.funcao}</p>
+                {s.texto && <p class="socio__texto">{s.texto}</p>}
+              </div>
+            </div>
+          </div>
+          <h3>{s.nome}</h3>
+          <p class="socio__funcao">{s.funcao}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<script>
+  // Toque (celular/tablet): vira e desvira o card. No desktop o hover já faz isso.
+  document.querySelectorAll<HTMLElement>('[data-socio-card]').forEach((card) => {
+    card.addEventListener('click', () => card.classList.toggle('is-virado'));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.classList.toggle('is-virado'); }
+    });
+  });
+</script>
+
+<style>
+  /* ---------- card que vira ---------- */
+  .socio__card {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    perspective: 1200px;
+    border-radius: var(--r-card);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .socio__giro {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transition: transform .8s var(--ease-out-expo);
+  }
+  @media (hover: hover) {
+    .socio__card:hover .socio__giro { transform: scale(1.04) rotateY(180deg); }
+  }
+  .socio__card:focus-visible .socio__giro,
+  .socio__card.is-virado .socio__giro { transform: scale(1.04) rotateY(180deg); }
+  .socio__card:focus-visible { outline-offset: 6px; }
+
+  .socio__face {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--r-card);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  /* Verso: preto, logo AD translúcido ao fundo e os hexágonos da marca soltos (como na 404) */
+  .socio__verso {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--s-2);
+    padding: var(--s-6);
+    overflow: hidden;
+    transform: rotateY(180deg);
+    border: 1px solid var(--socio-verso-borda);
+    background:
+      radial-gradient(90% 60% at 100% 0%, var(--socio-verso-brilho), transparent 65%),
+      linear-gradient(170deg, var(--socio-verso-from), var(--socio-verso-to));
+    color: var(--socio-verso-ink);
+    box-shadow: var(--glass-shadow);
+  }
+  .socio__verso > :global(.socio__verso-logo) {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    width: 92%;
+    height: auto;
+    translate: -50% 0;
+    color: var(--socio-verso-ink);
+    opacity: .07;
+    pointer-events: none;
+  }
+  .socio__verso > p { position: relative; }
+
+  .socio__hex {
+    position: absolute;
+    width: var(--s);
+    aspect-ratio: 1.1547;
+    clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+    rotate: var(--r);
+    scale: 0;
+    transition: scale .6s var(--ease-out-expo), rotate .8s var(--ease-out-expo);
+  }
+  .socio__hex--red    { --s: 18px; --r: -14deg; top: 9%;  left: 10%; background: var(--brand-red);    transition-delay: .25s; }
+  .socio__hex--blue   { --s: 26px; --r: 12deg;  top: 7%;  right: 12%; background: var(--brand-blue);  transition-delay: .32s; }
+  .socio__hex--green  { --s: 34px; --r: -8deg;  top: 27%; right: 22%; background: var(--brand-green); transition-delay: .39s; }
+  .socio__hex--yellow { --s: 22px; --r: 18deg;  top: 31%; left: 20%; background: var(--brand-yellow); transition-delay: .46s; }
+  /* os hexágonos surgem quando o card vira */
+  @media (hover: hover) {
+    .socio__card:hover .socio__hex { scale: 1; rotate: calc(var(--r) + 30deg); }
+  }
+  .socio__card:focus-visible .socio__hex,
+  .socio__card.is-virado .socio__hex { scale: 1; rotate: calc(var(--r) + 30deg); }
+
+  .socio__verso-nome {
+    font-family: var(--font-title);
+    font-size: clamp(24px, 2.3vw, 30px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--socio-verso-nome);
+  }
+  .socio__verso-funcao { font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--socio-verso-funcao); }
+  .socio__verso .socio__texto { margin-top: var(--s-3); font-size: clamp(15px, 1.25vw, 17px); line-height: 1.5; color: inherit; }
+
+  .socios__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--s-5);
+    margin-top: var(--s-10);
+  }
+  .socio__foto {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: linear-gradient(160deg, var(--avatar-from), var(--avatar-to));
+  }
+  .socio__foto span {
+    font-family: var(--font-title);
+    font-size: 54px;
+    font-weight: 700;
+    color: var(--avatar-ink);
+  }
+  .socio__foto :global(picture) { display: block; width: 100%; height: 100%; }
+  .socio__foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(.9) contrast(1.05);
+  }
+  /* Foto abre de baixo para cima com zoom assentando; nome e texto entram em seguida */
+  :global(.motion) .socio {
+    --atraso: calc(var(--i, 0) * 110ms);
+  }
+  :global(.motion) .socio .socio__foto {
+    clip-path: inset(0 0 0 0 round var(--r-card));
+    transition: clip-path 1.2s var(--ease-out-expo) var(--atraso);
+  }
+  :global(.motion) .socio:not(:global(.is-in)) .socio__foto { clip-path: inset(100% 0 0 0 round var(--r-card)); }
+  :global(.motion) .socio .socio__foto :global(img),
+  :global(.motion) .socio .socio__foto span { transition: scale 1.6s var(--ease-out-expo) var(--atraso); }
+  :global(.motion) .socio:not(:global(.is-in)) .socio__foto :global(img),
+  :global(.motion) .socio:not(:global(.is-in)) .socio__foto span { scale: 1.18; }
+  :global(.motion) .socio > :not(.socio__card) {
+    transition:
+      opacity .6s var(--ease-out-quart) calc(var(--atraso) + 350ms),
+      translate .8s var(--ease-out-expo) calc(var(--atraso) + 350ms);
+  }
+  :global(.motion) .socio:not(:global(.is-in)) > :not(.socio__card) { opacity: 0; translate: 0 12px; }
+
+  .socio h3 { margin-top: var(--s-4); font-size: 19px; }
+  .socio__funcao, .socio__texto { font-size: 14.5px; color: var(--muted); }
+  .socio__funcao { margin-top: var(--s-1); font-weight: 600; }
+  .socio__texto { margin-top: var(--s-2); }
+
+  @media (max-width: 959px) {
+    .socios__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 619px) {
+    .socios__grid { gap: var(--s-6) var(--s-4); }
+    .socio__foto span { font-size: 44px; }
+  }
+</style>

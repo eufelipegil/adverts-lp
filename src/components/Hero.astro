@@ -1,0 +1,220 @@
+---
+import WhatsAppButton from './WhatsAppButton.astro';
+import CredCard from './CredCard.astro';
+import { H1, site } from '../data/site';
+
+// "\n" no título vira quebra de linha só no desktop largo (ver .quebra)
+const linhas = (texto: string) => texto.split('\n');
+---
+
+<!--
+  Primeira dobra: textos à esquerda sobre o azul marinho; o vídeo (fotos da equipe) ocupa a direita
+  e se dissolve no fundo por uma máscara em degradê, para o texto ficar sempre legível por cima.
+  O fundo do vídeo é o mesmo azul do site (#050B1A), então a emenda some.
+  É sempre escura (.surface-dark), em qualquer tom da página.
+-->
+<section class="hero surface-dark" aria-labelledby="hero-titulo" data-tone="escuro">
+  <div class="hero__midia" aria-hidden="true">
+    <video
+      src="/hero/hero.mp4"
+      poster="/hero/hero-poster.jpg"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      tabindex="-1"
+      data-hero-video
+    ></video>
+  </div>
+
+  <div class="container hero__conteudo">
+    <div class="hero__texto">
+      <p class="label">Marketing e tráfego pago para revendas de software</p>
+      <h1 id="hero-titulo">
+        {linhas(H1.texto).map((l, i, a) => <Fragment>{l}{i < a.length - 1 && <Fragment> <br class="quebra" /></Fragment>}</Fragment>)}
+        {' '}<span class="grad-text">{linhas(H1.destaque).map((l, i, a) => <Fragment>{l}{i < a.length - 1 && <Fragment> <br class="quebra" /></Fragment>}</Fragment>)}</span>
+      </h1>
+      <p class="lead hero__sub">
+        A Adverts monta e opera a aquisição de clientes da sua revenda: anúncios no Google e no Meta, página que converte, CRM organizado e automação. Seu time comercial para de caçar contato e passa o dia fechando contrato.
+      </p>
+      <div class="hero__botoes">
+        <WhatsAppButton ctaId="cta_hero" class="hero__cta" />
+        <a href="#resultados" class="btn btn--ghost">Ver o case de MRR</a>
+      </div>
+      <p class="micro hero__micro">Conversa sem compromisso pelo WhatsApp · {site.horario}</p>
+    </div>
+  </div>
+
+  <CredCard />
+</section>
+
+<script>
+  // Movimento reduzido: o vídeo fica parado no primeiro quadro. Fora da tela, pausa para poupar bateria.
+  const v = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  if (v) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      v.removeAttribute('autoplay');
+      v.pause();
+    } else {
+      new IntersectionObserver((es) => {
+        for (const e of es) e.isIntersecting ? v.play().catch(() => {}) : v.pause();
+      }).observe(v);
+    }
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    min-height: min(920px, 100svh);
+    padding-block: calc(var(--header-h) + var(--s-10)) var(--s-12); /* o topo flutua por cima */
+    background: var(--bg);
+    overflow: clip;
+  }
+
+  /* ---------- vídeo com máscara ---------- */
+  .hero__midia {
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    right: 0;
+    width: 78%;
+    aspect-ratio: 16 / 9;
+    translate: 0 -46%;
+    /* some à esquerda (onde estão os textos) e em cima/embaixo; limpo à direita */
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, transparent 30%, rgba(0, 0, 0, .16) 46%, rgba(0, 0, 0, .5) 57%, #000 70%),
+      linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(90deg, transparent 0%, transparent 30%, rgba(0, 0, 0, .16) 46%, rgba(0, 0, 0, .5) 57%, #000 70%),
+      linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+    mask-composite: intersect;
+  }
+  .hero__midia video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+  }
+
+  /* ---------- textos ---------- */
+  .hero__conteudo { position: relative; width: 100%; }
+  .hero__texto { max-width: 620px; }
+  .hero__texto h1 { margin-top: var(--s-5); text-shadow: 0 2px 28px var(--hero-text-shadow); }
+  .hero__sub { margin-top: var(--s-6); max-width: 560px; }
+
+  .hero__botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-8);
+  }
+  .hero__micro { margin-top: var(--s-4); }
+  /* sobre o vídeo, o botão secundário ganha fundo escuro translúcido para a borda não sumir */
+  .hero__botoes .btn--ghost {
+    background: var(--glass-tint);
+    border-color: var(--line-2);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .quebra { display: none; }
+
+  /* ---------- entrada da primeira dobra ---------- */
+  :global(.motion) .hero__texto > * { animation: hero-in 1.3s var(--ease-out-expo) both; }
+  :global(.motion) .hero__texto > :nth-child(1) { animation-delay: .15s; }
+  :global(.motion) .hero__texto > :nth-child(2) { animation-delay: .25s; }
+  :global(.motion) .hero__texto > :nth-child(3) { animation-delay: .45s; }
+  :global(.motion) .hero__texto > :nth-child(4) { animation-delay: .58s; }
+  :global(.motion) .hero__texto > :nth-child(5) { animation-delay: .7s; }
+  :global(.motion) .hero__midia { animation: hero-midia 2.2s var(--ease-out-expo) both; }
+  @keyframes hero-in { from { opacity: 0; translate: 0 48px; filter: blur(12px); } }
+  @keyframes hero-midia { from { opacity: 0; scale: 1.18; } }
+
+  /* primeira dobra de ponta a ponta no desktop */
+  @media (min-width: 1024px) {
+    .hero > .container { max-width: none; padding-inline: var(--edge); }
+  }
+
+  /*
+    Desktop largo: o vídeo cobre a hero inteira, encostado à direita. As fotos começam em ~31% da
+    largura do vídeo; o degradê da máscara escurece essa faixa para o título correr em 4 linhas por cima.
+  */
+  @media (min-width: 1440px) {
+    .hero { --fs: clamp(44px, 3.6vw, 66px); min-height: min(800px, 100svh); }
+    .quebra { display: inline; }
+    .hero__texto { max-width: none; }
+    .hero__texto h1 { font-size: var(--fs); font-stretch: 108%; }
+
+    .hero__midia {
+      inset: 0;
+      width: auto;
+      aspect-ratio: auto;
+      translate: none;
+      -webkit-mask-image:
+        linear-gradient(90deg, transparent 0%, transparent 32%, rgba(0, 0, 0, .16) 46%, rgba(0, 0, 0, .5) 57%, #000 70%),
+        linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+      mask-image:
+        linear-gradient(90deg, transparent 0%, transparent 32%, rgba(0, 0, 0, .16) 46%, rgba(0, 0, 0, .5) 57%, #000 70%),
+        linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    }
+  }
+
+  /* ---------- tablet e celular: vídeo abaixo dos textos, dissolvendo para cima ---------- */
+  @media (max-width: 959px) {
+    .hero {
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 0;
+      padding-block: calc(var(--header-h) + var(--s-8)) 0;
+    }
+    .hero__midia {
+      position: relative;
+      top: auto;
+      width: auto;
+      translate: none;
+      aspect-ratio: auto;
+      z-index: 0;
+      order: 2;
+      height: clamp(260px, 62vw, 520px);
+      margin-top: calc(var(--s-6) * -1);
+      -webkit-mask-image:
+        linear-gradient(180deg, transparent 0%, #000 38%),
+        linear-gradient(0deg, transparent 0%, #000 18%);
+      mask-image:
+        linear-gradient(180deg, transparent 0%, #000 38%),
+        linear-gradient(0deg, transparent 0%, #000 18%);
+    }
+    .hero__midia { -webkit-mask-composite: source-in; mask-composite: intersect; }
+    .hero__conteudo { order: 1; }
+  }
+
+  @media (max-width: 619px) {
+    .hero { padding-top: calc(var(--header-h) + var(--s-6)); }
+    .hero__botoes { flex-direction: column; }
+    .hero__botoes .btn, .hero__botoes :global(.hero__cta) { width: 100%; }
+
+    /* Celular: vídeo em 3:4 que sobe por trás dos botões; o card de credenciais flutua embaixo */
+    .hero__conteudo { position: relative; z-index: 1; }
+    .hero__midia {
+      height: auto;
+      aspect-ratio: 3 / 4;
+      margin-top: -200px; /* altura aproximada dos botões + microtexto */
+      -webkit-mask-image:
+        linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, .3) 30%, #000 56%),
+        linear-gradient(0deg, transparent 0%, #000 12%);
+      mask-image:
+        linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, .3) 30%, #000 56%),
+        linear-gradient(0deg, transparent 0%, #000 12%);
+    }
+    .hero__micro { color: var(--text); text-shadow: 0 1px 12px var(--hero-text-shadow); }
+    /* o recorte vertical mostra ~42% da largura do vídeo: centraliza na área das fotos */
+    .hero__midia video { object-position: 72% center; }
+  }
+</style>

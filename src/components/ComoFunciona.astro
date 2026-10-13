@@ -1,0 +1,110 @@
+---
+import WhatsAppButton from './WhatsAppButton.astro';
+import Words from './Words.astro';
+import { etapas } from '../data/etapas';
+---
+
+<section id="como-funciona" class="section section--junto" aria-labelledby="como-titulo" data-tone="escuro">
+  <div class="container como__pin" data-como-pin>
+    <div class="section-head como__head">
+      <p class="label" data-reveal="label">Como funciona</p>
+      <h2 id="como-titulo" data-reveal="words"><Words text='Do primeiro "oi" no WhatsApp até a escala.' /></h2>
+      <p data-reveal="up" style="--d0:260ms">Nada de pacote pronto empurrado na primeira ligação. Primeiro a gente entende a sua revenda, depois propõe.</p>
+    </div>
+
+    <ol class="como__grid" data-como-trilho>
+      {etapas.map((e, i) => (
+        <li class="card etapa spot" data-reveal="up" style={`--i:${i}`}>
+          <span class="etapa__num" aria-hidden="true">{e.numero}</span>
+          <h3><span class="sr-only">Etapa {e.numero}: </span>{e.titulo}</h3>
+          <p>{e.texto}</p>
+        </li>
+      ))}
+    </ol>
+    <div class="como__barra" aria-hidden="true"><span data-como-barra></span></div>
+  </div>
+
+  <div class="container">
+    <div class="como__cta" data-reveal="up">
+      <WhatsAppButton ctaId="cta_processo" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .como__head { max-width: 720px; }
+  .como__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: var(--s-10);
+  }
+  .etapa__num {
+    display: block;
+    margin-bottom: var(--s-5);
+    font-family: var(--font-title);
+    font-stretch: var(--display-stretch);
+    font-size: 64px;
+    font-weight: 800;
+    line-height: .9;
+    letter-spacing: -0.05em;
+    color: var(--accent); /* azul da marca: 3,6:1 no card branco (texto grande), 5,2:1 no card escuro */
+  }
+  /* número da etapa cresce depois do card entrar */
+  :global(.motion) .etapa .etapa__num {
+    transform-origin: left bottom;
+    transition:
+      scale .8s var(--ease-out-expo) calc(var(--i, 0) * var(--stagger) + 200ms),
+      opacity .5s var(--ease-out-quart) calc(var(--i, 0) * var(--stagger) + 200ms);
+  }
+  :global(.motion) .etapa:not(:global(.is-in)) .etapa__num { scale: .5; opacity: 0; }
+
+  .como__barra { display: none; }
+
+  /*
+    Desktop com altura sobrando: as etapas viram uma esteira horizontal. A seção trava na tela
+    e a rolagem vertical empurra os cards para a esquerda (scripts/premium.ts liga .como--h).
+  */
+  :global(.como--h) .como__pin { max-width: none; padding-inline: max(var(--gutter), calc((100vw - var(--maxw)) / 2)); }
+  :global(.como--h) .como__grid {
+    display: flex;
+    width: max-content;
+    gap: var(--s-5);
+    margin-top: var(--s-9);
+    will-change: transform;
+  }
+  :global(.como--h) .etapa {
+    flex: none;
+    width: clamp(320px, 29vw, 420px);
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+  }
+  :global(.como--h) .etapa__num { font-size: 96px; margin-bottom: auto; padding-bottom: var(--s-8); }
+  :global(.como--h) .como__barra {
+    display: block;
+    height: 2px;
+    margin-top: var(--s-8);
+    max-width: var(--maxw);
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  :global(.como--h) .como__barra span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-blue), var(--brand-yellow));
+    transform-origin: 0 50%;
+    scale: 0 1;
+  }
+
+  .como__cta { display: flex; justify-content: center; margin-top: var(--s-9); }
+
+  @media (max-width: 959px) {
+    .como__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 619px) {
+    .como__grid { grid-template-columns: 1fr; }
+    .como__cta :global(.btn) { width: 100%; }
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+import Icon from './Icon.astro';
+import Words from './Words.astro';
+
+const cards = [
+  {
+    icone: 'code',
+    titulo: 'Falamos a sua língua',
+    texto: 'Implantação, mensalidade, MRR, churn, demonstração. Você não gasta a primeira reunião explicando como a sua venda funciona.',
+  },
+  {
+    icone: 'message',
+    titulo: 'Atendimento consultivo de verdade',
+    texto: 'Grupo no WhatsApp com o time que toca o seu projeto. Dúvida, ajuste ou ideia nova vira conversa no mesmo dia, não ticket na fila.',
+  },
+  {
+    icone: 'lineChart',
+    titulo: 'Número na mesa, sempre',
+    texto: 'Quanto foi investido, quantos contatos chegaram e quantos viraram reunião. Sem relatório bonito que esconde o que importa.',
+  },
+] as const;
+---
+
+<section class="section" aria-labelledby="porque-titulo" data-tone="claro">
+  <div class="container">
+    <div class="section-head">
+      <p class="label" data-reveal="label">Por que a Adverts</p>
+      <h2 id="porque-titulo" data-reveal="words"><Words text="A gente entendia de software antes de entender de anúncio." /></h2>
+      <p data-reveal="up" style="--d0:260ms">A Adverts nasceu dentro da tecnologia. O Bruno trabalhou anos na área antes de migrar para o tráfego pago. O Ariel chegou como cliente, trouxe a bagagem de vendas e a rede de contatos no mercado de software, e virou sócio. Depois vieram Guilherme e Matheus, hoje também sócios.</p>
+      <p data-reveal="up" style="--d0:360ms">Quatro pessoas olhando para o mesmo problema: fazer revenda de tecnologia vender com previsibilidade.</p>
+    </div>
+
+    <ul class="porque__cards">
+      {cards.map((c, i) => (
+        <li class="card porque__card" data-reveal="up" style={`--i:${i}`}>
+          <span class="icon-box"><Icon name={c.icone} /></span>
+          <h3>{c.titulo}</h3>
+          <p>{c.texto}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .section-head p + p { margin-top: var(--s-4); }
+  .porque__cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-5);
+    margin-top: var(--s-10);
+  }
+  .porque__cards h3 { margin-top: var(--s-5); }
+  /* ícone surge depois do card */
+  :global(.motion) .porque__card .icon-box { transition: scale .7s var(--ease-out-expo) calc(var(--i, 0) * var(--stagger) + 220ms), rotate .7s var(--ease-out-expo) calc(var(--i, 0) * var(--stagger) + 220ms); }
+  :global(.motion) .porque__card:not(:global(.is-in)) .icon-box { scale: .4; rotate: -20deg; }
+  @media (max-width: 959px) {
+    .porque__cards { grid-template-columns: 1fr; }
+  }
+</style>

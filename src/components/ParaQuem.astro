@@ -1,0 +1,86 @@
+---
+import Icon from './Icon.astro';
+import Words from './Words.astro';
+
+const sim = [
+  'Tem uma revenda de software ou empresa de tecnologia com receita recorrente',
+  'Já tem produto validado e clientes ativos',
+  'Tem pelo menos uma pessoa pronta para atender o lead que chegar',
+  'Quer previsibilidade e topa construir isso olhando para número',
+];
+const nao = [
+  'Procura só alguém para postar no Instagram',
+  'Espera venda chegando sem ninguém para responder o WhatsApp',
+  'Quer promessa de faturamento antes de mostrar como a sua operação funciona',
+];
+---
+
+<section class="section" aria-labelledby="paraquem-titulo" data-tone="escuro">
+  <div class="container">
+    <div class="section-head section-head--center">
+      <p class="label" data-reveal="label">Para quem é</p>
+      <h2 id="paraquem-titulo" data-reveal="words"><Words text="A Adverts não é para todo mundo. E está tudo bem." /></h2>
+      <p data-reveal="up" style="--d0:260ms">Somos especialistas em um tipo de empresa. É isso que faz o resultado acontecer.</p>
+    </div>
+
+    <div class="pq__grid">
+      <div class="pq pq--sim spot" data-reveal="left">
+        <h3>Faz sentido se você</h3>
+        <ul>
+          {sim.map((item, j) => (
+            <li style={`--j:${j}`}><Icon name="check" size={20} class="pq__icone" />{item}</li>
+          ))}
+        </ul>
+      </div>
+      <div class="pq pq--nao spot" data-reveal="right" style="--d0:120ms">
+        <h3>Não faz sentido se você</h3>
+        <ul>
+          {nao.map((item, j) => (
+            <li style={`--j:${j}`}><Icon name="x" size={20} class="pq__icone" />{item}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pq__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-5);
+    margin-top: var(--s-10);
+  }
+  .pq {
+    padding: var(--s-8);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+  }
+  .pq ul { display: grid; gap: var(--s-4); margin-top: var(--s-6); }
+  .pq li { display: flex; gap: var(--s-3); align-items: flex-start; font-size: var(--fs-card); }
+  .pq li :global(.pq__icone) { flex: none; margin-top: 2px; }
+
+  /* itens entram em sequência depois da coluna */
+  :global(.motion) .pq li {
+    transition:
+      opacity .5s var(--ease-out-quart) calc(var(--d0, 0ms) + var(--j, 0) * 80ms + 300ms),
+      translate .7s var(--ease-out-expo) calc(var(--d0, 0ms) + var(--j, 0) * 80ms + 300ms);
+  }
+  :global(.motion) .pq:not(:global(.is-in)) li { opacity: 0; translate: 0 10px; }
+
+  .pq--sim {
+    border-color: var(--fit-line);
+    background: linear-gradient(160deg, var(--fit-from), var(--fit-to));
+  }
+  .pq--sim li { color: var(--text); }
+  .pq--sim li :global(.pq__icone) { color: var(--icon-ink); }
+
+  .pq--nao { background: var(--card); }
+  .pq--nao li { color: var(--muted); }
+  .pq--nao li :global(.pq__icone) { color: var(--danger); }
+
+  @media (max-width: 619px) {
+    .pq__grid { grid-template-columns: 1fr; }
+    .pq { padding: var(--s-6); }
+  }
+</style>

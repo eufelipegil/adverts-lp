@@ -1,0 +1,57 @@
+---
+import { faq } from '../data/faq';
+import { meta, site } from '../data/site';
+
+const url = new URL('/', site.url).href;
+
+const organizacao = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': `${url}#organizacao`,
+  name: site.nome,
+  legalName: site.razaoSocial || undefined,
+  taxID: site.cnpj || undefined,
+  alternateName: site.nomeCurto,
+  url,
+  description: meta.description,
+  email: site.email,
+  telephone: `+${site.whatsapp.numero}`,
+  image: new URL('/og-image.jpg', site.url).href,
+  logo: new URL('/logo.png', site.url).href,
+  areaServed: 'BR',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: site.cidade.nome,
+    addressRegion: site.cidade.uf,
+    addressCountry: 'BR',
+  },
+  sameAs: [site.redes.instagram.url, site.redes.facebook.url].filter(Boolean),
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'sales',
+    telephone: `+${site.whatsapp.numero}`,
+    url: `https://wa.me/${site.whatsapp.numero}`,
+    areaServed: 'BR',
+    availableLanguage: 'Portuguese',
+  },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    opens: '08:00',
+    closes: '18:00',
+  },
+};
+
+const faqPage = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.pergunta,
+    acceptedAnswer: { '@type': 'Answer', text: f.resposta },
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(organizacao)} />
+<script type="application/ld+json" set:html={JSON.stringify(faqPage)} />

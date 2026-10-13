@@ -1,0 +1,149 @@
+---
+// Card flutuante sobre a foto da hero que passa pelos itens de credibilidade.
+// Só no celular e no tablet (<960px); no desktop os itens ficam na faixa CredStrip.astro.
+// Todos os itens estão no HTML (leitores de tela e Google leem a lista inteira);
+// a troca é só visual. Pausa com mouse/foco em cima e fora da tela.
+// Para depois de 2 voltas completas (WCAG 2.2.2).
+// Sem JS ou com movimento reduzido, não gira sozinho.
+import Icon from './Icon.astro';
+import { credibilidade } from '../data/credibilidade';
+---
+
+<div class="cred-card surface-dark" data-cred aria-label="Credenciais da Adverts" role="region">
+  <ul class="cred-card__lista">
+    {credibilidade.map((item, i) => (
+      <li class:list={['cred-card__item', { 'is-ativo': i === 0 }]} data-cred-item>
+        <span class="cred-card__icone"><Icon name={item.icone} size={18} /></span>
+        <span class="cred-card__texto">
+          <strong>{item.principal}</strong>{item.resto && ` ${item.resto}`}
+        </span>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  const card = document.querySelector<HTMLElement>('[data-cred]');
+  if (card) {
+    const itens = [...card.querySelectorAll<HTMLElement>('[data-cred-item]')];
+    const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const INTERVALO = 3000;
+    let atual = 0;
+    let timer = 0;
+    let visivel = true;
+    let pausado = false;
+    let trocas = 0;
+    const MAX_TROCAS = itens.length * 2; // 2 voltas e para no primeiro item
+
+    card.classList.add('is-js');
+
+    const mostrar = (n: number) => {
+      const anterior = atual;
+      atual = (n + itens.length) % itens.length;
+      itens.forEach((el, i) => {
+        el.classList.toggle('is-ativo', i === atual);
+        el.classList.toggle('is-saindo', i === anterior && anterior !== atual);
+      });
+    };
+
+    const parar = () => { clearInterval(timer); timer = 0;  };
+    const rodar = () => {
+      parar();
+      if (reduz || pausado || !visivel || trocas >= MAX_TROCAS) return;
+      timer = window.setInterval(() => {
+        mostrar(atual + 1);
+        if (++trocas >= MAX_TROCAS) parar();
+      }, INTERVALO);
+    };
+
+    card.addEventListener('pointerenter', () => { pausado = true; parar(); });
+    card.addEventListener('pointerleave', () => { pausado = false; rodar(); });
+    card.addEventListener('focusin', () => { pausado = true; parar(); });
+    card.addEventListener('focusout', () => { pausado = false; rodar(); });
+
+    new IntersectionObserver(([e]) => { visivel = e.isIntersecting; rodar(); }).observe(card);
+    document.addEventListener('visibilitychange', () => { visivel = document.visibilityState === 'visible'; rodar(); });
+  }
+</script>
+
+<style>
+  .cred-card {
+    position: absolute;
+    z-index: 2;
+    right: var(--edge);
+    bottom: calc(var(--s-12) + var(--s-4));
+    width: min(340px, calc(100% - var(--gutter) * 2));
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--r-card);
+    background: var(--glass-fill), var(--glass-tint-strong);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    box-shadow: inset 0 1px 0 var(--glass-edge), var(--glass-shadow);
+  }
+  /* entrada do card na página */
+  @media (prefers-reduced-motion: no-preference) {
+    .cred-card { animation: cred-entra .9s var(--ease-out-expo) .6s both; }
+  }
+  @keyframes cred-entra { from { opacity: 0; translate: 0 16px; } }
+
+  /* ---------- itens: sem JS aparecem em lista; com JS ficam empilhados e trocam ---------- */
+  .cred-card__lista { display: grid; gap: var(--s-3); }
+  .cred-card.is-js .cred-card__lista { gap: 0; }
+  .cred-card.is-js .cred-card__item { grid-area: 1 / 1; }
+
+  .cred-card__item {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 40px;
+  }
+  .cred-card.is-js .cred-card__item {
+    opacity: 0;
+    translate: 0 14px;
+    filter: blur(4px);
+    transition:
+      opacity .5s var(--ease-out-quart),
+      translate .7s var(--ease-out-expo),
+      filter .5s var(--ease-out-quart);
+    pointer-events: none;
+  }
+  .cred-card.is-js .cred-card__item.is-saindo { translate: 0 -14px; }
+  .cred-card.is-js .cred-card__item.is-ativo {
+    opacity: 1;
+    translate: 0 0;
+    filter: none;
+    pointer-events: auto;
+    transition-delay: .12s;
+  }
+
+  .cred-card__icone {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: var(--tint-accent);
+    color: var(--accent);
+  }
+  .cred-card__texto { font-size: 15px; font-weight: 600; line-height: 1.35; color: var(--muted); }
+  .cred-card__texto strong { font-weight: 600; color: var(--text); }
+
+  /* desktop: não aparece (fora da tela, o script também não gira) */
+  @media (min-width: 960px) {
+    .cred-card { display: none; }
+  }
+
+  /* ---------- celular e tablet: sobre a parte de baixo da foto ---------- */
+  @media (max-width: 959px) {
+    .cred-card {
+      left: var(--gutter);
+      right: var(--gutter);
+      bottom: var(--s-6);
+      width: auto;
+      max-width: 520px;
+      margin-inline: auto;
+    }
+  }
+</style>

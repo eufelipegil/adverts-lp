@@ -1,0 +1,100 @@
+---
+import WhatsAppButton from './WhatsAppButton.astro';
+import CaseCard from './CaseCard.astro';
+import { cases } from '../data/cases';
+---
+
+<section id="resultados" class="section resultado" aria-labelledby="resultado-titulo" data-tone="escuro">
+  <div class="container">
+    <div class="resultado__grid">
+      <div>
+        <p class="label" data-reveal="label">Resultado</p>
+        <h2 id="resultado-titulo" class="resultado__h2" data-reveal="up" style="--d0:80ms">Receita recorrente de uma revenda atendida</h2>
+        <!-- O número R$ 1.500 → R$ 20.000 fica dentro do cartão, com a curva e o contador -->
+        <div class="resultado__cartao" data-reveal="up" style="--d0:180ms"><CaseCard /></div>
+      </div>
+      <div class="resultado__texto">
+        <p data-reveal="up" style="--d0:200ms">Esse foi o salto de receita recorrente de uma revenda de software que saiu da dependência de lista fria e passou a receber contato qualificado todo mês.</p>
+        <p data-reveal="up" style="--d0:300ms">Não teve post viral nem fórmula secreta. Teve campanha certa, página certa, processo comercial organizado e ajuste semana após semana.</p>
+        <div data-reveal="up" style="--d0:420ms"><WhatsAppButton ctaId="cta_case" class="resultado__cta" /></div>
+      </div>
+    </div>
+
+    {cases.length > 0 && (
+      <ul class="cases">
+        {cases.slice(0, 3).map((c, i) => (
+          <li class="card case-item" data-reveal="up" style={`--i:${i}`}>
+            <h3>{c.segmento}</h3>
+            <p class="case-item__num">{c.antes} <span aria-hidden="true">→</span><span class="sr-only">para</span> {c.depois}</p>
+            <p>{c.prazo}</p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<style>
+  /*
+    Luz circular atrás do cartão do case. É um elemento próprio (não o fundo da seção), com
+    gradiente que chega a transparente antes da borda: pode atravessar a divisa das
+    dobras sem desenhar linha de corte.
+  */
+  .resultado { position: relative; isolation: isolate; }
+  .resultado__grid > :first-child { position: relative; }
+  .resultado__grid > :first-child::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 38%;
+    top: 55%;
+    width: min(760px, 140vw); /* passa da divisa, mas não chega aos cards da dobra de cima */
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, var(--glow-result-core) 0%, var(--glow-result) 28%, var(--glow-result-soft) 60%, transparent 100%);
+    pointer-events: none;
+  }
+  .resultado__grid {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: var(--s-9) var(--s-10);
+    align-items: center;
+  }
+  .resultado__h2 {
+    margin-top: var(--s-4);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .resultado__cartao { margin-top: var(--s-6); max-width: 560px; }
+  .resultado__texto p { font-size: 18px; color: var(--muted); }
+  .resultado__texto p + p { margin-top: var(--s-4); }
+  .resultado__texto :global(.resultado__cta) { margin-top: var(--s-8); }
+
+  .cases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-5);
+    margin-top: var(--s-10);
+  }
+  .case-item__num {
+    margin-top: var(--s-3);
+    font-family: var(--font-title);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text) !important;
+  }
+
+  @media (max-width: 959px) {
+    .resultado__grid { grid-template-columns: 1fr; }
+    .cases { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 619px) {
+    .cases { grid-template-columns: 1fr; }
+    .resultado__texto :global(.resultado__cta) { width: 100%; }
+  }
+</style>

@@ -1,0 +1,196 @@
+---
+// Página de erro. Os quatro hexágonos do símbolo "saíram do lugar" e flutuam em volta do 404.
+// Os atalhos usam os rótulos e títulos aprovados de cada seção da home.
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+
+const atalhos = [
+  { href: '/#servicos', rotulo: 'O que fazemos', titulo: 'Tudo o que acontece entre o anúncio e o contrato assinado.', icone: 'layers' },
+  { href: '/#resultados', rotulo: 'Resultado', titulo: 'Receita recorrente de uma revenda atendida: R$ 1.500 → R$ 20.000', icone: 'lineChart' },
+  { href: '/#como-funciona', rotulo: 'Como funciona', titulo: 'Do primeiro "oi" no WhatsApp até a escala.', icone: 'message' },
+  { href: '/#duvidas', rotulo: 'Dúvidas', titulo: 'Antes de chamar no WhatsApp', icone: 'help' },
+] as const;
+
+const hexagonos = ['red', 'blue', 'green', 'yellow'];
+---
+
+<Base
+  title="Página não encontrada | Adverts"
+  description="A página que você procurou não existe ou mudou de endereço."
+  path="/404"
+  noindex
+>
+  <Header />
+  <main>
+    <section class="nf" data-tone="escuro" aria-labelledby="nf-titulo">
+      <div class="container nf__grid">
+        <div class="nf__intro">
+          <p class="label nf__in" style="--i:0">Erro 404</p>
+          <h1 id="nf-titulo" class="nf__titulo nf__in" style="--i:1">Esta página não foi encontrada</h1>
+          <p class="lead nf__in" style="--i:2">O endereço pode ter mudado ou não existir mais. Volte para a página inicial ou fale com a Adverts pelo WhatsApp.</p>
+          <div class="nf__acoes nf__in" style="--i:3">
+            <a class="btn btn--ghost" href="/"><Icon name="home" size={20} />Voltar para a página inicial</a>
+            <WhatsAppButton ctaId="cta_404" />
+          </div>
+        </div>
+
+        <div class="nf__arte" aria-hidden="true">
+          <span class="nf__numero">404</span>
+          {hexagonos.map((cor, i) => (
+            <span class={`nf__hex nf__hex--${cor}`} style={`--h:${i}`}></span>
+          ))}
+        </div>
+      </div>
+
+      <nav class="container nf__nav" aria-label="Seções do site">
+        <ul class="nf__lista">
+          {atalhos.map((a, i) => (
+            <li class="nf__in" style={`--i:${i + 4}`}>
+              <a class="nf__card" href={a.href}>
+                <span class="nf__icone"><Icon name={a.icone} size={20} /></span>
+                <span class="nf__corpo">
+                  <span class="nf__rotulo">{a.rotulo}</span>
+                  <span class="nf__card-titulo">{a.titulo}</span>
+                </span>
+                <Icon name="arrowUpRight" size={18} class="nf__seta" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .nf {
+    position: relative;
+    isolation: isolate;
+    min-height: 100svh;
+    padding-block: calc(var(--header-h) + var(--s-11)) var(--s-12);
+    background: radial-gradient(640px 460px at 80% 20%, var(--glow-accent), transparent 70%);
+  }
+  .nf__grid {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: var(--s-10);
+    align-items: center;
+  }
+  .nf__titulo {
+    margin-top: var(--s-4);
+    font-size: var(--fs-h1);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .nf__intro .lead { margin-top: var(--s-5); max-width: 52ch; }
+  .nf__acoes { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-8); }
+  .nf__acoes .btn--ghost :global(svg) { width: 20px; height: 20px; }
+
+  /* ---------- arte: 404 + hexágonos soltos ---------- */
+  .nf__arte {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1.3;
+  }
+  .nf__numero {
+    font-family: var(--font-title);
+    font-size: clamp(120px, 17vw, 240px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--line-2);
+    user-select: none;
+  }
+  .nf__hex {
+    --s: 64px;
+    position: absolute;
+    width: var(--s);
+    aspect-ratio: 1.1547;
+    clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+    left: var(--x);
+    top: var(--y);
+  }
+  /* posição final de cada peça, espalhada em volta do número */
+  .nf__hex--red    { --s: 44px; --x: 8%;  --y: 18%; --r: -14deg; background: var(--brand-red); }
+  .nf__hex--blue   { --s: 58px; --x: 78%; --y: 10%; --r: 12deg;  background: var(--brand-blue); }
+  .nf__hex--green  { --s: 84px; --x: 70%; --y: 66%; --r: -8deg;  background: var(--brand-green); }
+  .nf__hex--yellow { --s: 52px; --x: 14%; --y: 70%; --r: 18deg;  background: var(--brand-yellow); }
+
+  /* ---------- atalhos ---------- */
+  .nf__nav { margin-top: var(--s-11); }
+  .nf__lista {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--s-4);
+  }
+  .nf__card {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr auto;
+    gap: var(--s-4);
+    height: 100%;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--card);
+    transition: border-color .3s ease, transform .35s var(--ease-out-quart);
+  }
+  .nf__card:hover { border-color: var(--line-2); transform: translateY(-3px); }
+  .nf__icone {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--tint-accent);
+    color: var(--accent);
+  }
+  .nf__card :global(.nf__seta) { grid-row: 1; grid-column: 2; align-self: start; color: var(--muted); transition: translate .35s var(--ease-out-expo), color .2s ease; }
+  .nf__card:hover :global(.nf__seta) { translate: 3px -3px; color: var(--text); }
+  .nf__corpo { grid-column: 1 / -1; display: grid; gap: var(--s-2); }
+  .nf__rotulo { font-size: var(--fs-label); font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--label-ink); }
+  .nf__card-titulo { font-family: var(--font-title); font-size: 17px; font-weight: 600; line-height: 1.35; color: var(--text); }
+
+  /* ---------- movimento (só CSS; a página abre direto, sem depender de rolagem) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .nf__in { animation: nf-sobe .9s var(--ease-out-expo) both; animation-delay: calc(.1s + var(--i, 0) * 70ms); }
+    .nf__numero { animation: nf-numero 1.2s var(--ease-out-expo) both; }
+    /* hexágonos partem juntos do centro (encaixados como no logo) e se espalham; depois flutuam */
+    .nf__hex {
+      animation:
+        nf-solta 1.4s var(--ease-out-expo) calc(.25s + var(--h) * 90ms) both,
+        nf-flutua 6s ease-in-out calc(1.8s + var(--h) * .7s) infinite alternate;
+    }
+  }
+  .nf__hex { rotate: var(--r); }
+  @keyframes nf-sobe { from { opacity: 0; translate: 0 22px; } }
+  @keyframes nf-numero { from { opacity: 0; scale: .92; filter: blur(10px); } }
+  @keyframes nf-solta {
+    from { left: 46%; top: 42%; rotate: 0deg; scale: .5; opacity: 0; }
+    30%  { opacity: 1; }
+  }
+  @keyframes nf-flutua {
+    from { translate: 0 0; }
+    to   { translate: 0 -14px; rotate: calc(var(--r) + 8deg); }
+  }
+
+  @media (max-width: 959px) {
+    .nf__grid { grid-template-columns: 1fr; }
+    .nf__arte { order: -1; max-width: 520px; width: 100%; margin-inline: auto; aspect-ratio: 1.6; }
+    .nf__lista { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 619px) {
+    .nf { padding-top: calc(var(--header-h) + var(--s-6)); }
+    .nf__hex { --s: 40px; }
+    .nf__hex--green { --s: 60px; }
+    .nf__acoes { flex-direction: column; }
+    .nf__acoes > :global(*) { width: 100%; }
+    .nf__lista { grid-template-columns: 1fr; }
+  }
+</style>

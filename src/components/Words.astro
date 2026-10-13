@@ -1,0 +1,17 @@
+---
+// Quebra um texto em palavras mascaradas para a animação de título (.w em global.css).
+// O texto continua o mesmo para leitores de tela e buscadores; só ganha <span>s.
+interface Props {
+  text: string;
+  class?: string;
+  /** índice da primeira palavra, para continuar a sequência de outro <Words> */
+  start?: number;
+}
+
+const { text, class: className, start = 0 } = Astro.props;
+const palavras = text.split(/\s+/).filter(Boolean);
+---
+
+{palavras.map((palavra, i) => (
+  <Fragment><span class:list={['w', className]} style={`--wi:${start + i}`}><span>{palavra}</span></span>{i < palavras.length - 1 && ' '}</Fragment>
+))}

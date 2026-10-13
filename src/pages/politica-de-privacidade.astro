@@ -1,0 +1,382 @@
+---
+// Política de privacidade (LGPD). Descreve só o que o site realmente faz:
+// não há formulário nem login; medição por GA4, Google Ads, Meta Pixel e Widz Track; contato pelo WhatsApp.
+// Razão social, CNPJ e e-mail vêm de site.ts.
+// RASCUNHO: texto ainda não aprovado pelo cliente. Rever (de preferência com um jurídico) antes do domínio oficial.
+// ATENÇÃO: não há aviso de consentimento de cookies no site. Antes de afirmar "só depois do seu consentimento"
+// aqui, o aviso precisa existir e bloquear as tags antes do aceite.
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+const atualizacao = '13 de outubro de 2026';
+const controlador = [site.razaoSocial || site.nome, site.cnpj && `CNPJ ${site.cnpj}`].filter(Boolean).join(', ');
+
+const svg = (d: string) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ic = {
+  ban: svg('<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>'),
+  chart: svg('<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>'),
+  chat: svg('<path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/>'),
+  user: svg('<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><path d="M16 19l2 2 4-4"/>'),
+  mail: svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'),
+  check: svg('<path d="M5 12l5 5L20 7"/>'),
+  link: svg('<path d="M10 14a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-.5.5"/><path d="M14 10a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l.5-.5"/>'),
+  server: svg('<rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7v.01M7 17v.01"/>'),
+  balanca: svg('<path d="M12 4v16"/><path d="M6 20h12"/><path d="M5 7h14"/><path d="M5 7l-3 7a3 3 0 0 0 6 0L5 7zM19 7l-3 7a3 3 0 0 0 6 0l-3-7z"/>'),
+};
+
+const resumo = [
+  { i: ic.ban, t: 'Não vendemos dados', d: 'Nenhum dado seu é vendido a ninguém.' },
+  { i: ic.chart, t: 'Só dados de navegação', d: 'O site não tem formulário nem cadastro. Medimos a visita, não pedimos seus dados.' },
+  { i: ic.chat, t: 'Contato pelo WhatsApp', d: 'A conversa acontece no aplicativo, com a política dele.' },
+  { i: ic.user, t: 'Você no controle', d: 'Peça acesso, correção ou exclusão pelo e-mail abaixo.' },
+];
+
+const ferramentas = [
+  { t: 'Google Analytics', d: 'Para entender como o site é usado: páginas visitadas, tempo de visita e origem do acesso.' },
+  { t: 'Google Ads', d: 'Para medir o resultado dos nossos anúncios no Google.' },
+  { t: 'Meta (Facebook e Instagram)', d: 'Para medir e melhorar nossos anúncios nessas redes.' },
+  { t: 'Ferramenta própria de mensuração', d: 'Para saber quais canais trazem contatos.' },
+];
+
+const direitos = [
+  'Confirmação de que tratamos seus dados e acesso a eles',
+  'Correção de dados incompletos, inexatos ou desatualizados',
+  'Anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade com a lei',
+  'Informação sobre com quem compartilhamos seus dados',
+  'Revogação do consentimento, quando ele for a base do tratamento',
+];
+
+const compartilha = [
+  { i: ic.chart, t: 'Google e Meta', d: 'Recebem os dados de navegação das ferramentas de medição citadas acima, conforme as políticas de cada uma.' },
+  { i: ic.chat, t: 'WhatsApp (Meta)', d: 'Ao clicar em um botão de WhatsApp, você é levado ao aplicativo, que tem política de privacidade própria.' },
+  { i: ic.link, t: 'Links externos', d: 'Instagram, Facebook e Google Maps, a que o site dá acesso por link. Ao abri-los, valem as políticas de cada serviço.' },
+  { i: ic.server, t: 'Hospedagem do site', d: 'O provedor de hospedagem processa dados técnicos de navegação para entregar as páginas.' },
+  { i: ic.balanca, t: 'Autoridades', d: 'Quando houver obrigação legal ou ordem judicial.' },
+];
+
+const indice = [
+  ['responsavel', 'Quem é responsável'],
+  ['dados', 'Quais dados tratamos'],
+  ['cookies', 'Cookies e medição'],
+  ['bases', 'Para quê e base legal'],
+  ['compartilhamento', 'Compartilhamento'],
+  ['guarda', 'Tempo de guarda'],
+  ['direitos', 'Seus direitos'],
+  ['seguranca', 'Segurança'],
+  ['mudancas', 'Mudanças na política'],
+];
+---
+
+<Base
+  title="Política de Privacidade | Adverts"
+  description="Como a Adverts Agência de Marketing trata os dados de navegação coletados neste site, com base na LGPD."
+  path="/politica-de-privacidade/"
+>
+  <Header />
+  <main>
+    <section class="pol-hero" data-tone="escuro" aria-labelledby="pol-titulo">
+      <div class="container pol-hero__inner">
+        <p class="label" data-reveal="label">Privacidade</p>
+        <h1 id="pol-titulo" data-reveal="up" style="--d0:80ms">Política de <span class="pol-dest">privacidade</span></h1>
+        <p class="lead pol-lead" data-reveal="up" style="--d0:160ms">
+          Esta política explica como a {site.nome} trata os dados de quem visita este site, em conformidade com a Lei
+          Geral de Proteção de Dados (Lei nº 13.709/2018, a LGPD).
+        </p>
+        <p class="pol-data" data-reveal="up" style="--d0:240ms"><span>Última atualização</span>{atualizacao}</p>
+      </div>
+    </section>
+
+    <div class="container pol-resumo" data-tone="claro">
+      {resumo.map((r) => (
+        <div class="pol-chip">
+          <span class="pol-ico" set:html={r.i} />
+          <h2>{r.t}</h2>
+          <p>{r.d}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="container pol-layout" data-tone="claro">
+      <nav class="pol-toc" aria-label="Neste documento">
+        <p class="pol-toc__t">Neste documento</p>
+        <ol>
+          {indice.map(([id, nome]) => <li><a href={`#${id}`}>{nome}</a></li>)}
+        </ol>
+      </nav>
+
+      <div class="pol-corpo">
+        <section class="pol-sec" id="responsavel" aria-labelledby="t1">
+          <h2 id="t1"><span class="pol-n" aria-hidden="true"></span>Quem é responsável pelos dados</h2>
+          <p>O controlador dos dados tratados neste site é a {controlador}, de {site.cidade.nome}, {site.cidade.uf}.</p>
+          <p>Para qualquer assunto sobre privacidade, escreva para <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+        </section>
+
+        <section class="pol-sec" id="dados" aria-labelledby="t2">
+          <h2 id="t2"><span class="pol-n" aria-hidden="true"></span>Quais dados tratamos</h2>
+          <div class="pol-duo">
+            <div>
+              <h3>Dados de navegação</h3>
+              <p>
+                Páginas visitadas, tempo de visita, tipo de dispositivo e navegador, cidade aproximada, a origem do
+                acesso (por exemplo, um anúncio ou uma busca) e os cliques nos botões de WhatsApp.
+              </p>
+            </div>
+            <div>
+              <h3>O que você envia no WhatsApp</h3>
+              <p>
+                Quando você chama a gente, recebemos o que escolher compartilhar. Usamos isso apenas para responder ao
+                seu contato, entender a sua operação e preparar uma proposta.
+              </p>
+            </div>
+          </div>
+          <p class="pol-nota">Este site não tem formulário, cadastro nem área de login.</p>
+        </section>
+
+        <section class="pol-sec" id="cookies" aria-labelledby="t3">
+          <h2 id="t3"><span class="pol-n" aria-hidden="true"></span>Cookies e ferramentas de medição</h2>
+          <p>
+            A coleta dos dados de navegação é feita por cookies e tecnologias parecidas, a partir destas ferramentas:
+          </p>
+          <div class="pol-grade">
+            {ferramentas.map((f) => (
+              <div class="pol-mini">
+                <h3>{f.t}</h3>
+                <p>{f.d}</p>
+              </div>
+            ))}
+          </div>
+          <p>
+            Você pode apagar ou bloquear os cookies a qualquer momento nas configurações do seu navegador. O site
+            continua funcionando.
+          </p>
+        </section>
+
+        <section class="pol-sec" id="bases" aria-labelledby="t4">
+          <h2 id="t4"><span class="pol-n" aria-hidden="true"></span>Para quê usamos e em que base legal</h2>
+          <p>
+            Para medir o desempenho do site e dos anúncios, entender quais conteúdos são úteis e melhorar a sua
+            experiência. A base legal é o legítimo interesse da Adverts em divulgar e aprimorar os seus serviços, sempre
+            respeitando os seus direitos.
+          </p>
+        </section>
+
+        <section class="pol-sec" id="compartilhamento" aria-labelledby="t5">
+          <h2 id="t5"><span class="pol-n" aria-hidden="true"></span>Com quem os dados podem ser compartilhados</h2>
+          <p>Não vendemos dados a ninguém. O compartilhamento acontece apenas quando necessário:</p>
+          <div class="pol-grade">
+            {compartilha.map((c) => (
+              <div class="pol-mini">
+                <span class="pol-ico pol-ico--sm" set:html={c.i} />
+                <h3>{c.t}</h3>
+                <p>{c.d}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section class="pol-sec" id="guarda" aria-labelledby="t6">
+          <h2 id="t6"><span class="pol-n" aria-hidden="true"></span>Por quanto tempo guardamos</h2>
+          <p>
+            Os dados ficam armazenados pelo tempo definido em cada ferramenta, em geral até 14 meses no Google Analytics.
+            O que você nos envia pelo WhatsApp é mantido pelo tempo necessário para o atendimento e para cumprir
+            obrigações legais.
+          </p>
+        </section>
+
+        <section class="pol-sec" id="direitos" aria-labelledby="t7">
+          <h2 id="t7"><span class="pol-n" aria-hidden="true"></span>Seus direitos</h2>
+          <p>Pela LGPD, você pode solicitar a qualquer momento:</p>
+          <ul class="pol-direitos">
+            {direitos.map((d) => <li><span class="pol-ok" set:html={ic.check} />{d}</li>)}
+          </ul>
+          <p>
+            Para exercer qualquer um desses direitos, envie um e-mail para
+            <a href={`mailto:${site.email}`}>{site.email}</a>. Respondemos em até 15 dias. Você também pode recorrer à
+            Autoridade Nacional de Proteção de Dados (ANPD).
+          </p>
+        </section>
+
+        <section class="pol-sec" id="seguranca" aria-labelledby="t8">
+          <h2 id="t8"><span class="pol-n" aria-hidden="true"></span>Segurança</h2>
+          <p>
+            Adotamos medidas técnicas e administrativas razoáveis para proteger os dados contra acesso não autorizado,
+            perda e uso indevido. Nenhum meio de comunicação é totalmente livre de riscos, por isso pedimos que você
+            evite enviar informações desnecessárias por canais abertos.
+          </p>
+        </section>
+
+        <section class="pol-sec" id="mudancas" aria-labelledby="t9">
+          <h2 id="t9"><span class="pol-n" aria-hidden="true"></span>Mudanças nesta política</h2>
+          <p>
+            Esta política pode ser atualizada para acompanhar mudanças no site ou na legislação. A data da última
+            atualização fica sempre no topo desta página.
+          </p>
+        </section>
+
+        <aside class="pol-contato">
+          <span class="pol-ico pol-ico--contato" set:html={ic.mail} />
+          <div>
+            <h2>Dúvidas ou pedidos sobre seus dados?</h2>
+            <p>Escreva para a Adverts. Respondemos em até 15 dias.</p>
+          </div>
+          <a class="btn btn--ghost pol-contato__btn" href={`mailto:${site.email}`}>{site.email}</a>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  const links = document.querySelectorAll<HTMLAnchorElement>('.pol-toc a');
+  if (links.length && 'IntersectionObserver' in window) {
+    const mapa = new Map<string, HTMLAnchorElement>();
+    links.forEach((a) => mapa.set(a.getAttribute('href')!.slice(1), a));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          links.forEach((a) => a.classList.remove('ativo'));
+          mapa.get(e.target.id)?.classList.add('ativo');
+        });
+      },
+      { rootMargin: '-20% 0px -65% 0px' },
+    );
+    document.querySelectorAll('.pol-sec').forEach((s) => io.observe(s));
+  }
+</script>
+
+<style>
+  .pol-hero { padding-block: calc(var(--header-h) + var(--s-11)) calc(var(--s-12) + var(--s-8)); }
+  .pol-hero__inner { max-width: calc(860px + var(--gutter) * 2); margin-inline: 0; }
+  .pol-hero h1 { margin-top: var(--s-4); font-size: clamp(34px, 5.4vw, 64px); }
+  .pol-dest { color: var(--accent); }
+  .pol-lead { margin-top: var(--s-5); max-width: 46em; }
+  .pol-data {
+    display: inline-flex; align-items: center; gap: var(--s-3);
+    margin-top: var(--s-7); padding: 9px 18px;
+    border: 1px solid var(--line-2); border-radius: var(--r-pill);
+    font-size: var(--fs-micro); font-weight: 500; color: var(--text);
+  }
+  .pol-data span { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+
+  /* cards de resumo, sobrepostos ao fim do hero */
+  .pol-resumo {
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-4);
+    margin-top: calc(var(--s-11) * -1);
+  }
+  .pol-chip {
+    padding: var(--s-6);
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card);
+    box-shadow: 0 24px 40px -30px rgba(0, 0, 0, .55);
+  }
+  .pol-chip h2 { margin: var(--s-4) 0 var(--s-2); font-size: 17px; letter-spacing: -0.01em; }
+  .pol-chip p { font-size: 14.5px; line-height: 1.5; color: var(--muted); }
+
+  .pol-ico {
+    display: grid; place-items: center; flex: none;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--tint-accent); color: var(--accent);
+  }
+  .pol-ico :global(svg) { width: 22px; height: 22px; }
+  .pol-ico--sm { width: 40px; height: 40px; }
+
+  .pol-layout {
+    display: grid; grid-template-columns: 250px 1fr; align-items: start;
+    gap: clamp(28px, 5vw, 72px);
+    padding-block: var(--s-11) var(--s-12);
+  }
+
+  /* índice lateral: sticky quebra se algum ancestral tiver overflow:hidden */
+  .pol-toc {
+    position: sticky; top: calc(var(--header-h) + var(--s-6));
+    padding-left: var(--s-5); border-left: 1px solid var(--line);
+  }
+  .pol-toc__t { margin-bottom: var(--s-3); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .pol-toc ol { counter-reset: toc; }
+  .pol-toc li { counter-increment: toc; }
+  .pol-toc a { position: relative; display: block; padding: 7px 0; font-size: 14.5px; color: var(--muted); transition: color .2s; }
+  .pol-toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    display: inline-block; width: 30px; font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  }
+  .pol-toc a:hover, .pol-toc a.ativo { color: var(--text); }
+  .pol-toc a.ativo { font-weight: 600; }
+  .pol-toc a.ativo::after {
+    content: ''; position: absolute; left: calc(var(--s-5) * -1 - 1px); top: 50%;
+    width: 3px; height: 20px; transform: translateY(-50%); border-radius: 2px; background: var(--accent);
+  }
+
+  .pol-corpo { display: grid; gap: var(--s-4); counter-reset: sec; min-width: 0; }
+  .pol-sec {
+    counter-increment: sec;
+    padding: clamp(24px, 3.4vw, 40px);
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r-hero-card);
+  }
+  .pol-sec h2 { display: flex; align-items: center; gap: var(--s-4); margin-bottom: var(--s-5); font-size: clamp(20px, 2.2vw, 26px); letter-spacing: -0.02em; }
+  .pol-n {
+    display: grid; place-items: center; flex: none;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--text); color: var(--bg);
+    font-family: var(--font-body); font-size: 15px; font-weight: 600; letter-spacing: .02em;
+  }
+  .pol-n::before { content: counter(sec, decimal-leading-zero); }
+  .pol-sec p { max-width: 46em; color: var(--muted); text-wrap: pretty; }
+  .pol-sec p + p, .pol-sec .pol-grade + p, .pol-sec .pol-duo + p, .pol-sec .pol-direitos + p { margin-top: var(--s-4); }
+  .pol-sec h3 { margin-bottom: var(--s-2); font-size: 16px; font-stretch: 100%; letter-spacing: -0.01em; }
+  .pol-sec a { color: var(--text); font-weight: 600; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+  .pol-sec a:hover { color: var(--accent); }
+
+  .pol-duo { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+  .pol-duo > div, .pol-mini { padding: var(--s-5) var(--s-6); background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-card); }
+  .pol-duo p, .pol-mini p { font-size: 15px; }
+  .pol-nota { padding-left: var(--s-4); border-left: 3px solid var(--accent-2); }
+  .pol-grade { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); margin-top: var(--s-4); }
+  .pol-mini .pol-ico { margin-bottom: var(--s-3); }
+
+  .pol-direitos { display: grid; gap: var(--s-3); margin-top: var(--s-4); }
+  .pol-direitos li {
+    display: flex; align-items: flex-start; gap: var(--s-4);
+    padding: var(--s-3) var(--s-5);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 14px;
+    font-size: 15px; color: var(--muted);
+  }
+  .pol-ok { display: grid; place-items: center; flex: none; width: 24px; height: 24px; margin-top: 2px; border-radius: 50%; background: var(--accent); color: #fff; }
+  .pol-ok :global(svg) { width: 14px; height: 14px; }
+
+  /* bloco de contato, sempre escuro */
+  .pol-contato {
+    display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-6);
+    padding: clamp(24px, 3.4vw, 40px);
+    background: linear-gradient(135deg, var(--final-1), var(--final-3));
+    border-radius: var(--r-hero-card); color: #fff;
+  }
+  .pol-ico--contato { width: 56px; height: 56px; background: var(--tint-accent-2); color: var(--brand-yellow); }
+  .pol-ico--contato :global(svg) { width: 26px; height: 26px; }
+  .pol-contato > div { flex: 1 1 260px; }
+  .pol-contato h2 { color: #fff; font-size: 22px; }
+  .pol-contato p { margin-top: var(--s-2); color: #A9B3C7; }
+  .pol-contato__btn { color: #fff; border-color: rgba(255, 255, 255, .3); }
+
+  @media (max-width: 1020px) {
+    .pol-resumo { grid-template-columns: 1fr 1fr; }
+    .pol-layout { grid-template-columns: 1fr; padding-top: var(--s-9); }
+    .pol-toc { position: static; padding-left: 0; border-left: 0; }
+    .pol-toc ol { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+    .pol-toc a { padding: 8px 14px; border: 1px solid var(--line); border-radius: var(--r-pill); font-size: 13.5px; background: var(--card); }
+    .pol-toc a::before, .pol-toc a.ativo::after { display: none; }
+    .pol-toc a.ativo { background: var(--text); color: var(--bg); border-color: var(--text); }
+  }
+  @media (max-width: 620px) {
+    .pol-hero { padding-bottom: calc(var(--s-11) + var(--s-6)); }
+    .pol-resumo { grid-template-columns: 1fr; margin-top: calc(var(--s-9) * -1); }
+    .pol-duo, .pol-grade { grid-template-columns: 1fr; }
+    .pol-sec h2 { align-items: flex-start; gap: var(--s-3); }
+    .pol-n { width: 38px; height: 38px; font-size: 14px; }
+    .pol-contato__btn { width: 100%; justify-content: center; }
+  }
+</style>

@@ -1,0 +1,144 @@
+---
+import Logo from './Logo.astro';
+import WidzCredit from './WidzCredit.astro';
+import Icon from './Icon.astro';
+import { ctas } from '../data/ctas';
+import { site } from '../data/site';
+import { waLink } from '../lib/whatsapp';
+
+const ano = new Date().getFullYear();
+// Slogan em 3 linhas no rodapé: "Marketing para quem / constrói o futuro da / tecnologia."
+const sloganLinhas = site.slogan.replace('quem ', 'quem\n').replace('futuro da ', 'futuro da\n').split('\n');
+const empresa = [site.razaoSocial, site.cnpj && `CNPJ ${site.cnpj}`].filter(Boolean).join(' · ');
+---
+
+<footer class="footer surface-dark" data-tone="escuro">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <a href="/#topo" class="footer__logo" aria-label="Adverts, voltar ao topo"><Logo class="footer__svg" /></a>
+        <p class="footer__slogan">{sloganLinhas.map((l, i) => <Fragment>{i > 0 && <br />}{l}</Fragment>)}</p>
+      </div>
+
+      <div>
+        <h2 class="footer__titulo">Contato</h2>
+        <ul class="footer__contato">
+          <li><a href={waLink('cta_rodape')} data-cta="cta_rodape" target="_blank" rel="noopener"><Icon name="whatsapp" size={18} class="footer__ic" />{ctas.cta_rodape.texto}</a></li>
+          <li><a href={`mailto:${site.email}`}><Icon name="mail" size={18} class="footer__ic" />{site.email}</a></li>
+          <li><a href={site.cidade.mapa} target="_blank" rel="noopener"><Icon name="pin" size={18} class="footer__ic" />{site.cidade.nome}, {site.cidade.uf}</a></li>
+          <li><span><Icon name="clock" size={18} class="footer__ic" />{site.horario}</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__titulo">Redes</h2>
+        <ul class="footer__redes">
+          <li>
+            <a class="footer__rede" href={site.redes.instagram.url} target="_blank" rel="noopener" aria-label={`Instagram da Adverts, ${site.redes.instagram.usuario}`}>
+              <Icon name="instagram" size={20} />
+            </a>
+          </li>
+          {site.redes.facebook.url && (
+            <li>
+              <a class="footer__rede" href={site.redes.facebook.url} target="_blank" rel="noopener" aria-label={`Facebook da Adverts, ${site.redes.facebook.nome}`}>
+                <Icon name="facebook" size={20} />
+              </a>
+            </li>
+          )}
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__base">
+      <p class="footer__copy">
+        © {ano} {site.nome}. Todos os direitos reservados.{empresa && <> {empresa}</>}
+      </p>
+      <div class="footer__direita">
+        <a class="footer__legal" href="/politica-de-privacidade/">Política de privacidade</a>
+        <WidzCredit />
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* Rodapé sempre escuro (base da página), em qualquer tom: mantém o crédito da widz legível */
+  .footer {
+    padding: var(--s-9) 0 var(--s-6);
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+  }
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: var(--s-8);
+  }
+  .footer__logo { display: inline-block; color: var(--text); }
+  .footer__logo :global(.footer__svg) { display: block; width: auto; height: 72px; }
+  .footer__slogan { margin-top: var(--s-3); max-width: 320px; font-size: 15px; color: var(--muted); }
+  .footer__titulo {
+    font-family: var(--font-title);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--accent-2); /* amarelo da marca */
+  }
+  .footer ul { display: grid; gap: var(--s-2); margin-top: var(--s-4); font-size: 15px; color: var(--muted); }
+  .footer ul a { display: inline-block; padding-block: 4px; transition: color .2s ease; }
+  .footer ul a:hover { color: var(--text); }
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-2) var(--s-6);
+    margin-top: var(--s-9);
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .footer__legal { display: inline-flex; align-items: center; min-height: 44px; transition: color .2s ease; }
+  .footer__legal:hover { color: var(--text); }
+
+  /* contato: ícone + texto; no hover o ícone e o texto ganham destaque */
+  .footer__contato a, .footer__contato span { display: inline-flex !important; align-items: center; gap: var(--s-3); }
+  .footer__contato :global(.footer__ic) { flex: none; color: var(--muted); transition: color .25s ease; }
+  .footer__contato a:hover :global(.footer__ic),
+  .footer__contato a:focus-visible :global(.footer__ic),
+  .footer__contato span:hover :global(.footer__ic) { color: var(--accent-2); }
+  .footer__contato span { transition: color .25s ease; }
+  .footer__contato span:hover { color: var(--text); }
+
+  /* redes: ícones redondos; no hover/foco ficam no amarelo da marca */
+  .footer ul.footer__redes { display: flex; gap: var(--s-3); }
+  .footer__rede {
+    display: grid !important;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0 !important;
+    border: 1px solid var(--line-2);
+    border-radius: 50%;
+    color: var(--text);
+    transition: color .25s ease, border-color .25s ease, background-color .25s ease, translate .35s var(--ease-out-expo);
+  }
+  .footer__rede:hover,
+  .footer__rede:focus-visible {
+    color: var(--accent-2) !important;
+    border-color: var(--accent-2);
+    background: var(--tint-accent-2);
+    translate: 0 -2px;
+  }
+
+  .footer__direita { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-6); }
+
+  @media (max-width: 619px) {
+    .footer__grid { grid-template-columns: 1fr; }
+    /* área de toque de 44px; o espaço entre itens cai para não alongar a lista */
+    .footer ul { gap: 0; }
+    .footer ul.footer__redes { gap: var(--s-3); }
+    .footer__contato a, .footer__contato span { min-height: 44px; }
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+// Faixa de credibilidade abaixo da hero, só no desktop (≥960px).
+// No celular e no tablet os mesmos itens aparecem no card flutuante da hero (CredCard.astro).
+import Icon from './Icon.astro';
+import { credibilidade } from '../data/credibilidade';
+---
+
+<section class="cred" aria-label="Credenciais da Adverts" data-tone="escuro">
+  <ul class="container cred__lista">
+    {credibilidade.map((item, i) => (
+      <li data-reveal="up" style={`--i:${i}`}>
+        <span class="cred__icone"><Icon name={item.icone} size={18} /></span>
+        <span class="cred__texto">
+          <strong>{item.principal}</strong>{item.resto && ` ${item.resto}`}
+        </span>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .cred {
+    border-block: 1px solid var(--line);
+    padding-block: 26px;
+  }
+  .cred__lista {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--s-5);
+  }
+  .cred__lista li { display: flex; align-items: center; gap: var(--s-3); }
+  .cred__icone {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--tint-accent);
+    color: var(--accent);
+  }
+  .cred__texto { font-size: 15px; font-weight: 600; line-height: 1.35; color: var(--muted); }
+  .cred__texto strong { font-weight: 600; color: var(--text); }
+
+  @media (max-width: 959px) {
+    .cred { display: none; }
+  }
+</style>
