@@ -96,15 +96,18 @@ const menu = [
 
 <style>
   /*
-    O topo flutua sobre a primeira dobra (margem negativa), para o vidro mostrar
+    O topo flutua sobre a primeira dobra (fora do fluxo), para o vidro mostrar
     o conteúdo passando por baixo. A hero compensa com --header-h no padding.
   */
+  /*
+    fixed (não sticky): no Safari do iPhone o sticky para abaixo da área do relógio e deixa o
+    conteúdo aparecer por cima da navbar; o fixed vai até a borda de cima da tela.
+  */
   .header {
-    position: sticky;
-    top: 0;
+    position: fixed;
+    inset: 0 0 auto;
     z-index: 50;
     height: var(--header-h);
-    margin-bottom: calc(var(--header-h) * -1);
   }
   .header__inner { position: relative; height: 100%; padding-top: var(--safe-top); }
   .header__bar {
