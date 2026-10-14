@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://advertsagencia.com.br/sitemap-index.xml
