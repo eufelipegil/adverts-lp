@@ -108,6 +108,8 @@ const menu = [
     inset: 0 0 auto;
     z-index: 50;
     height: var(--header-h);
+    /* fundo opaco: o Safari do iPhone usa esta cor para pintar a faixa do relógio (vidro translúcido não serve) */
+    background-color: var(--bg);
   }
   .header__inner { position: relative; height: 100%; padding-top: var(--safe-top); }
   .header__bar {
