@@ -250,6 +250,17 @@ body[data-tone='claro']::after { opacity: .045; }
   0% { translate: 0 0; } 25% { translate: -3% 2%; } 50% { translate: 2% -3%; } 75% { translate: -2% -1%; } 100% { translate: 0 0; }
 }
 
+/* Tira sólida na borda de cima da tela (4px): dá cor à faixa do relógio no Safari do iPhone.
+   Fica atrás da navbar (z-index 50) e acompanha o tom da página. */
+.topo-cor {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  height: 4px;
+  background-color: var(--bg);
+  pointer-events: none;
+}
+
 /* Barra de progresso da leitura, colada na borda de baixo do topo */
 .progresso {
   position: fixed;
