@@ -42,9 +42,14 @@ const iniciais = (nome: string) =>
           </div>
           <h3>{s.nome}</h3>
           <p class="socio__funcao">{s.funcao}</p>
+          {s.texto && <p class="socio__texto-cel">{s.texto}</p>}
         </li>
       ))}
     </ul>
+    <!-- Celular: carrossel; as bolinhas mostram em qual sócio está -->
+    <div class="socios__dots" aria-hidden="true" data-socios-dots>
+      {socios.map((_, i) => <span class:list={[i === 0 && 'is-ativo']}></span>)}
+    </div>
   </div>
 </section>
 
@@ -56,6 +61,27 @@ const iniciais = (nome: string) =>
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.classList.toggle('is-virado'); }
     });
   });
+
+  // Celular: bolinhas acompanham o sócio que está centralizado no carrossel.
+  const lista = document.querySelector<HTMLElement>('.socios__grid');
+  const bolinhas = document.querySelectorAll<HTMLElement>('[data-socios-dots] span');
+  if (lista && bolinhas.length) {
+    const atualizar = () => {
+      const itens = [...lista.children] as HTMLElement[];
+      const caixa = lista.getBoundingClientRect();
+      // o card "ativo" é o que está mais perto do início visível da lista
+      const referencia = caixa.left + (parseFloat(getComputedStyle(lista).paddingLeft) || 0);
+      let ativo = 0;
+      let menor = Infinity;
+      itens.forEach((el, i) => {
+        const d = Math.abs(el.getBoundingClientRect().left - referencia);
+        if (d < menor) { menor = d; ativo = i; }
+      });
+      bolinhas.forEach((b, i) => b.classList.toggle('is-ativo', i === ativo));
+    };
+    lista.addEventListener('scroll', atualizar, { passive: true });
+    atualizar();
+  }
 </script>
 
 <style>
@@ -204,8 +230,37 @@ const iniciais = (nome: string) =>
   @media (max-width: 959px) {
     .socios__grid { grid-template-columns: repeat(2, 1fr); }
   }
+  .socio__texto-cel, .socios__dots { display: none; }
+
+  /*
+    Celular: carrossel deslizante. Um sócio por vez, com o próximo aparecendo na borda.
+    Foto com nome, função e texto embaixo; o card que vira fica só para tablet e desktop.
+  */
   @media (max-width: 619px) {
-    .socios__grid { gap: var(--s-6) var(--s-4); }
+    .socios__grid {
+      display: flex;
+      gap: var(--s-4);
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+      padding-bottom: var(--s-2);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .socios__grid::-webkit-scrollbar { display: none; }
+    .socio { flex: 0 0 78%; scroll-snap-align: start; }
+    .socio__card { cursor: default; }
+    .socio__giro, .socio__card:focus-visible .socio__giro, .socio__card.is-virado .socio__giro { transform: none; }
+    .socio__verso { display: none; }
     .socio__foto span { font-size: 44px; }
+    .socio h3 { font-size: 21px; }
+    .socio__funcao { font-size: 15px; }
+    .socio__texto-cel { display: block; margin-top: var(--s-3); font-size: 15px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+    .socios__dots { display: flex; justify-content: center; gap: 6px; margin-top: var(--s-5); }
+    .socios__dots span { width: 6px; height: 6px; border-radius: 3px; background: var(--line-2); transition: width .3s var(--ease-out-expo), background-color .3s ease; }
+    .socios__dots span.is-ativo { width: 20px; background: var(--text); }
   }
 </style>
