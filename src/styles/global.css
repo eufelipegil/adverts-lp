@@ -260,15 +260,16 @@ body[data-tone='claro']::after { opacity: .045; }
   0% { translate: 0 0; } 25% { translate: -3% 2%; } 50% { translate: 2% -3%; } 75% { translate: -2% -1%; } 100% { translate: 0 0; }
 }
 
-/* Tira sólida na borda de cima da tela (4px): dá cor à faixa do relógio no Safari do iPhone.
-   Fica atrás da navbar (z-index 50) e acompanha o tom da página. */
+/* Tira sólida na borda de cima da tela (2px).
+   O Safari do iOS 26 pinta a faixa do relógio com a cor do elemento fixo opaco encostado no topo;
+   a navbar é vidro translúcido e não serve. A tira fica ACIMA da navbar (z-index) e recebe toque
+   (sem pointer-events: none), senão o Safari a ignora. Acompanha o tom da página (--bg). */
 .topo-cor {
   position: fixed;
   inset: 0 0 auto;
-  z-index: 40;
-  height: 4px;
+  z-index: 60;
+  height: 2px;
   background-color: var(--bg);
-  pointer-events: none;
 }
 
 /* Barra de progresso da leitura, colada na borda de baixo do topo */
