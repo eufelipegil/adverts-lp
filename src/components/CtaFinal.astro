@@ -98,7 +98,7 @@ const frase2 = 'Ele vai encontrar a sua revenda ou a do concorrente?';
     gap: var(--s-10);
     align-items: center;
   }
-  .final__texto { display: flex; flex-direction: column; align-items: flex-start; }
+  .final__texto { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
   .final h2 { margin-top: var(--s-4); max-width: 20ch; font-size: clamp(30px, 3.9vw, 50px); line-height: 1.08; }
   .final__apoio { max-width: 520px; margin-top: var(--s-6); font-size: 18px; color: var(--muted); }
   .final :global(.final__cta) { margin-top: var(--s-8); }
@@ -215,7 +215,7 @@ const frase2 = 'Ele vai encontrar a sua revenda ou a do concorrente?';
   .chat__enviar { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--brand-white); }
 
   @media (max-width: 959px) {
-    .final__grade { grid-template-columns: 1fr; gap: var(--s-9, 48px); }
+    .final__grade { grid-template-columns: minmax(0, 1fr); gap: var(--s-9, 48px); }
     .final h2 { max-width: 22ch; }
     .chat-palco { justify-self: center; }
     .chat { rotate: 0deg; }
