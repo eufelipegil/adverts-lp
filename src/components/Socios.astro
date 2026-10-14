@@ -81,6 +81,40 @@ const iniciais = (nome: string) =>
     };
     lista.addEventListener('scroll', atualizar, { passive: true });
     atualizar();
+
+    // Passa sozinho no celular quando a seção está na tela e a pessoa não está mexendo.
+    // Para ao tocar/arrastar e volta depois de alguns segundos parado; respeita "reduzir movimento".
+    const celular = matchMedia('(max-width: 619px)');
+    const semMovimento = matchMedia('(prefers-reduced-motion: reduce)');
+    const INTERVALO = 4500;
+    const RETOMA = 9000;
+    let timer: number | undefined;
+    let visivel = false;
+    let pausadoAte = 0;
+
+    const proximo = () => {
+      if (!celular.matches || semMovimento.matches || !visivel || document.hidden) return;
+      if (Date.now() < pausadoAte) return;
+      const itens = [...lista.children] as HTMLElement[];
+      const atual = bolinhas.length ? [...bolinhas].findIndex((b) => b.classList.contains('is-ativo')) : 0;
+      const alvo = itens[(atual + 1) % itens.length];
+      const esquerda = alvo.getBoundingClientRect().left - lista.getBoundingClientRect().left + lista.scrollLeft
+        - (parseFloat(getComputedStyle(lista).paddingLeft) || 0);
+      lista.scrollTo({ left: Math.max(0, esquerda), behavior: 'smooth' });
+    };
+    const pausar = () => { pausadoAte = Date.now() + RETOMA; };
+    (['pointerdown', 'touchstart', 'wheel', 'keydown', 'focusin'] as const).forEach((ev) =>
+      lista.addEventListener(ev, pausar, { passive: true }),
+    );
+
+    new IntersectionObserver(
+      ([entrada]) => {
+        visivel = entrada.isIntersecting;
+        window.clearInterval(timer);
+        if (visivel) timer = window.setInterval(proximo, INTERVALO);
+      },
+      { threshold: 0.5 },
+    ).observe(lista);
   }
 </script>
 
