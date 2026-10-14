@@ -33,6 +33,9 @@ const ogImage = new URL('/og-image.jpg', site.url).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Cor da área do relógio/status do celular: acompanha o tom da página (atualizada no script de tom) -->
+    <meta name="theme-color" content="#050B1A" />
+    <meta name="color-scheme" content="dark light" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
@@ -91,7 +94,11 @@ const ogImage = new URL('/og-image.jpg', site.url).href;
           const r = el.getBoundingClientRect();
           if (r.top <= meio && r.bottom > meio) { tom = el.dataset.tone || 'escuro'; break; }
         }
-        if (document.body.dataset.tone !== tom) document.body.dataset.tone = tom;
+        if (document.body.dataset.tone !== tom) {
+          document.body.dataset.tone = tom;
+          // a faixa do relógio do celular segue o tom (fundo escuro ou off-white)
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', tom === 'claro' ? '#F5F4F0' : '#050B1A');
+        }
       };
       const pedirTom = () => { if (!agendado) { agendado = true; requestAnimationFrame(atualizarTom); } };
       window.addEventListener('scroll', pedirTom, { passive: true });
