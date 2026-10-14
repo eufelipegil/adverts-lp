@@ -36,13 +36,27 @@ jobs:
           PUBLIC_META_PIXEL_ID: ${{ vars.PUBLIC_META_PIXEL_ID }}
           PUBLIC_WIDZ_TRACK: ${{ vars.PUBLIC_WIDZ_TRACK }}
 
+      # Commit normal por cima da branch deploy (sem force push), para o git pull do cPanel nunca divergir.
       - name: Publicar dist/ na branch deploy
+        env:
+          REPO_URL: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
         run: |
-          cp .cpanel.yml dist/.cpanel.yml
-          cd dist
-          git init -b deploy
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads "$REPO_URL" deploy >/dev/null 2>&1; then
+            git clone --depth 1 --branch deploy "$REPO_URL" "$RUNNER_TEMP/deploy"
+          else
+            git init -b deploy "$RUNNER_TEMP/deploy"
+            git -C "$RUNNER_TEMP/deploy" remote add origin "$REPO_URL"
+          fi
+          cd "$RUNNER_TEMP/deploy"
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -R "$GITHUB_WORKSPACE/dist/." .
+          cp "$GITHUB_WORKSPACE/.cpanel.yml" .cpanel.yml
           git add -A
-          git commit -m "Deploy ${GITHUB_SHA::7}"
-          git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" deploy
+          if git diff --cached --quiet; then
+            echo "Nada mudou no site compilado."
+          else
+            git commit -m "Deploy ${GITHUB_SHA::7}"
+            git push origin deploy
+          fi
