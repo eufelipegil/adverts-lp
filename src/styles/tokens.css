@@ -105,7 +105,9 @@
   --gutter: 20px;
   --edge: max(var(--gutter), 3.75vw); /* margem das áreas de ponta a ponta (topo e hero) */
   --section-y: var(--s-12);
-  --header-h: 72px;
+  --safe-top: env(safe-area-inset-top, 0px); /* área do notch/ilha no iPhone */
+  --header-bar: 72px;                       /* altura da barra em si */
+  --header-h: calc(var(--header-bar) + var(--safe-top)); /* barra + área do notch: o topo vai até a borda do celular */
   --tone-ease: cubic-bezier(.65, 0, .35, 1); /* troca de tom ao rolar */
 
   /* Movimento */

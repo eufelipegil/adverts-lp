@@ -250,10 +250,10 @@ body[data-tone='claro']::after { opacity: .045; }
   0% { translate: 0 0; } 25% { translate: -3% 2%; } 50% { translate: 2% -3%; } 75% { translate: -2% -1%; } 100% { translate: 0 0; }
 }
 
-/* Barra de progresso da leitura, colada no topo */
+/* Barra de progresso da leitura, colada na borda de baixo do topo */
 .progresso {
   position: fixed;
-  inset: 0 0 auto;
+  inset: calc(var(--header-h) - 2px) 0 auto;
   z-index: 120;
   height: 2px;
   background: linear-gradient(90deg, var(--brand-blue), var(--brand-yellow));

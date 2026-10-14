@@ -37,7 +37,7 @@ if (mouseFino) {
 
 if (!reduz) {
   /* ---------- rolagem suave ---------- */
-  const header = parseFloat(getComputedStyle(raiz).getPropertyValue('--header-h')) || 72;
+  const header = document.querySelector<HTMLElement>('[data-header]')?.offsetHeight || 72; // já inclui a área do notch
   const lenis = new Lenis({ lerp: 0.09, anchors: { offset: -(header + 16) } });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((t) => lenis.raf(t * 1000));
