@@ -25,7 +25,7 @@ export const socios: Socio[] = [
   },
   {
     nome: 'Ariel Oliveira',
-    funcao: 'Sócio',
+    funcao: 'Sócio fundador',
     texto: 'Começou como cliente da Adverts. Traz a experiência de vendas e o networking no mercado de software.',
     foto: fotoAriel,
   },
