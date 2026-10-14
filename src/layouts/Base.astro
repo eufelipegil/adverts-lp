@@ -21,9 +21,11 @@ interface Props {
   noindex?: boolean;
   /** JSON-LD da home (organização + FAQ) */
   schema?: boolean;
+  /** barra de progresso da leitura (colada na navbar); desligue em páginas sem navbar, como a bio */
+  progresso?: boolean;
 }
 
-const { title = meta.title, description = meta.description, path = '/', noindex = false, schema = false } = Astro.props;
+const { title = meta.title, description = meta.description, path = '/', noindex = false, schema = false, progresso = true } = Astro.props;
 const canonical = new URL(path, site.url).href;
 const ogImage = new URL('/og-image.jpg', site.url).href;
 ---
@@ -76,7 +78,7 @@ const ogImage = new URL('/og-image.jpg', site.url).href;
       })(document.documentElement);
     </script>
   </head>
-  <body id="topo" data-tone="escuro">
+  <body id="topo" data-tone="escuro" data-sem-progresso={progresso ? undefined : ''}>
     <!-- Tira sólida fixa na borda de cima: o Safari do iPhone usa a cor dela para pintar a faixa do relógio/status -->
     <div class="topo-cor" aria-hidden="true"></div>
     <slot />

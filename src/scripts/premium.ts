@@ -13,16 +13,18 @@ const $ = <T extends Element = HTMLElement>(s: string, el: ParentNode = document
 const $$ = <T extends Element = HTMLElement>(s: string, el: ParentNode = document) => [...el.querySelectorAll<T>(s)];
 
 /* ---------- barra de progresso (sempre: não é movimento, é posição) ---------- */
-const barra = document.createElement('div');
-barra.className = 'progresso';
-barra.setAttribute('aria-hidden', 'true');
-document.body.append(barra);
-const progresso = () => {
-  const max = raiz.scrollHeight - innerHeight;
-  barra.style.scale = `${max > 0 ? Math.min(1, scrollY / max) : 0} 1`;
-};
-addEventListener('scroll', progresso, { passive: true });
-progresso();
+if (!document.body.hasAttribute('data-sem-progresso')) {
+  const barra = document.createElement('div');
+  barra.className = 'progresso';
+  barra.setAttribute('aria-hidden', 'true');
+  document.body.append(barra);
+  const progresso = () => {
+    const max = raiz.scrollHeight - innerHeight;
+    barra.style.scale = `${max > 0 ? Math.min(1, scrollY / max) : 0} 1`;
+  };
+  addEventListener('scroll', progresso, { passive: true });
+  progresso();
+}
 
 /* ---------- brilho que segue o cursor nos cards ---------- */
 if (mouseFino) {
