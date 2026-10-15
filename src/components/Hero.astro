@@ -13,6 +13,8 @@ const linhas = (texto: string) => texto.split('\n');
   O fundo do vídeo é o mesmo azul do site (#050B1A), então a emenda some.
   É sempre escura (.surface-dark), em qualquer tom da página.
 -->
+<!-- O quadro de abertura do vídeo é o maior elemento da dobra (LCP): baixa já, com prioridade alta -->
+<link rel="preload" as="image" href="/hero/hero-poster.jpg" fetchpriority="high" />
 <section class="hero surface-dark" aria-labelledby="hero-titulo" data-tone="escuro">
   <div class="hero__midia" aria-hidden="true">
     <video
@@ -22,7 +24,7 @@ const linhas = (texto: string) => texto.split('\n');
       muted
       loop
       playsinline
-      preload="auto"
+      preload="metadata"
       tabindex="-1"
       data-hero-video
     ></video>

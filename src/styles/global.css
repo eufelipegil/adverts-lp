@@ -259,6 +259,10 @@ body::after {
   animation: grao 1.2s steps(4) infinite;
 }
 body[data-tone='claro']::after { opacity: .045; }
+/* Celular: o granulado animado repinta a tela inteira o tempo todo (pesa no desempenho); só no desktop */
+@media (max-width: 859px) {
+  body::after { display: none; }
+}
 @keyframes grao {
   0% { translate: 0 0; } 25% { translate: -3% 2%; } 50% { translate: 2% -3%; } 75% { translate: -2% -1%; } 100% { translate: 0 0; }
 }
