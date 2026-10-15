@@ -1,0 +1,21 @@
+# Cloudflare Pages: equivale ao bloco de cabeçalhos do antigo .htaccess (que a Cloudflare não lê)
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000
+
+# Arquivos com hash no nome nunca mudam: cache de 1 ano
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Mídia e ícones: 30 dias
+/projetos/*
+  Cache-Control: public, max-age=2592000
+/hero/*
+  Cache-Control: public, max-age=2592000
+/*.png
+  Cache-Control: public, max-age=2592000
+/*.svg
+  Cache-Control: public, max-age=2592000
+/*.jpg
+  Cache-Control: public, max-age=2592000
