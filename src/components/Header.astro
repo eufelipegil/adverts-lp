@@ -219,10 +219,11 @@ const menu = [
 
     /* "cheio": a barra inteira é o vidro, com o menu encaixado logo abaixo */
     .header--cheio .header__bar { padding-right: 0; }
-    /* vidro mais firme no celular: a faixa do relógio é uma cor sólida (--bg); com o vidro quase da mesma
-       cor, a navbar e o relógio parecem uma peça só, e o conteúdo ainda se insinua por baixo */
+    /* Celular: a faixa do relógio é uma cor chapada (--bg) pintada pelo iOS. A navbar usa a MESMA cor
+       com 90% de cobertura e sem o brilho branco do vidro, então as duas parecem uma peça só;
+       o desfoque continua, e o conteúdo se insinua por baixo. Acompanha o tom da página. */
     .header--cheio::before {
-      background: var(--glass-fill), var(--glass-tint-strong);
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
     }
 
     /* "pílula": barra flutuante arredondada */
