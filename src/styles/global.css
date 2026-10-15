@@ -275,6 +275,10 @@ body[data-tone='claro']::after { opacity: .045; }
   height: 8px;
   background-color: var(--bg);
 }
+/* Só existe para o relógio do celular: no desktop (sem barra de status) ela só viraria uma faixa escura */
+@media (min-width: 860px) {
+  .topo-cor { display: none; }
+}
 
 /* Barra de progresso da leitura, colada na borda de baixo do topo */
 .progresso {
