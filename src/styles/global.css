@@ -250,6 +250,9 @@ body::after {
   position: fixed;
   inset: -50%;
   z-index: 200;
+  /* não cobre a borda de cima: o Safari do iPhone pinta a faixa do relógio com a cor do elemento fixo
+     do topo, e um ruído translúcido por cima impede isso (o elemento tem 200% da tela; 25% = topo da tela) */
+  clip-path: inset(calc(25% + 96px) 0 0 0);
   pointer-events: none;
   opacity: .06;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -268,7 +271,7 @@ body[data-tone='claro']::after { opacity: .045; }
 .topo-cor {
   position: fixed;
   inset: 0 0 auto;
-  z-index: 100;
+  z-index: 300; /* acima do granulado (200) e da navbar (50) */
   height: 8px;
   background-color: var(--bg);
 }
