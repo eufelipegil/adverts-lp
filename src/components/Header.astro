@@ -108,8 +108,6 @@ const menu = [
     inset: 0 0 auto;
     z-index: 50;
     height: var(--header-h);
-    /* fundo opaco: o Safari do iPhone usa esta cor para pintar a faixa do relógio (vidro translúcido não serve) */
-    background-color: var(--bg);
   }
   .header__inner { position: relative; height: 100%; padding-top: var(--safe-top); }
   .header__bar {
@@ -221,6 +219,11 @@ const menu = [
 
     /* "cheio": a barra inteira é o vidro, com o menu encaixado logo abaixo */
     .header--cheio .header__bar { padding-right: 0; }
+    /* vidro mais firme no celular: a faixa do relógio é uma cor sólida (--bg); com o vidro quase da mesma
+       cor, a navbar e o relógio parecem uma peça só, e o conteúdo ainda se insinua por baixo */
+    .header--cheio::before {
+      background: var(--glass-fill), var(--glass-tint-strong);
+    }
 
     /* "pílula": barra flutuante arredondada */
     .header--pilula { padding-top: 10px; }
