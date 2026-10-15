@@ -95,7 +95,8 @@ if (!reduz) {
     el.innerHTML = palavras.map((p) => `<span class="fill-w">${p}</span>`).join(' ');
     gsap.fromTo(
       $$('.fill-w', el),
-      { opacity: 0.16 },
+      // 0.34: abaixo disso o texto fica com contraste menor que 3:1 (texto grande) antes de rolar até ele
+      { opacity: 0.34 },
       { opacity: 1, stagger: 0.1, ease: 'none', scrollTrigger: { trigger: el, start: 'top 88%', end: 'bottom 50%', scrub: true } },
     );
   }
