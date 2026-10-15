@@ -1,0 +1,16 @@
+{
+  // Site estático da Adverts na Cloudflare (Workers com arquivos estáticos). Conta: contato@advertsagencia.com.br
+  "name": "adverts-lp",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // páginas inexistentes devolvem 404 com o 404.html do site (não a home)
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  // Domínios do site (a zona advertsagencia.com.br está nesta mesma conta)
+  "routes": [
+    { "pattern": "advertsagencia.com.br", "custom_domain": true },
+    { "pattern": "www.advertsagencia.com.br", "custom_domain": true }
+  ]
+}
