@@ -260,15 +260,16 @@ body[data-tone='claro']::after { opacity: .045; }
   0% { translate: 0 0; } 25% { translate: -3% 2%; } 50% { translate: 2% -3%; } 75% { translate: -2% -1%; } 100% { translate: 0 0; }
 }
 
-/* Tira sólida na borda de cima da tela (2px).
-   O Safari do iOS 26 pinta a faixa do relógio com a cor do elemento fixo opaco encostado no topo;
-   a navbar é vidro translúcido e não serve. A tira fica ACIMA da navbar (z-index) e recebe toque
-   (sem pointer-events: none), senão o Safari a ignora. Acompanha o tom da página (--bg). */
+/* Tira sólida na borda de cima da tela (8px).
+   Medido num iPhone (Safari): safe-area-inset-top é 0, mas o Safari estende a cor do elemento fixo
+   encostado no topo para dentro da área do relógio. Um teste com 6px funcionou; 2px não é considerado.
+   Fica ACIMA da navbar e recebe toque (sem pointer-events: none). Tem a mesma cor da navbar (--bg),
+   então não aparece como faixa. Acompanha o tom da página. */
 .topo-cor {
   position: fixed;
   inset: 0 0 auto;
-  z-index: 60;
-  height: 2px;
+  z-index: 100;
+  height: 8px;
   background-color: var(--bg);
 }
 
