@@ -2,8 +2,12 @@
   // Site estático da Adverts na Cloudflare (Workers com arquivos estáticos). Conta: contato@advertsagencia.com.br
   "name": "adverts-lp",
   "compatibility_date": "2026-10-01",
+  // Worker só para os vídeos: devolve respostas parciais (206), que o Safari do iPhone exige
+  "main": "./worker/index.js",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/hero/*", "/projetos/*", "/depoimento/*"],
     // páginas inexistentes devolvem 404 com o 404.html do site (não a home)
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"
