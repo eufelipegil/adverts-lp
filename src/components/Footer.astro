@@ -30,13 +30,13 @@ const empresa = [site.razaoSocial, site.cnpj && `CNPJ ${site.cnpj}`].filter(Bool
         <ul class="footer__redes" aria-label="Redes sociais">
           <li>
             <a class="footer__rede" href={site.redes.instagram.url} target="_blank" rel="noopener" aria-label={`Instagram da Adverts, ${site.redes.instagram.usuario}`}>
-              <Icon name="instagram" size={18} /><span>{site.redes.instagram.usuario}</span>
+              <Icon name="instagram" size={20} />
             </a>
           </li>
           {site.redes.facebook.url && (
             <li>
               <a class="footer__rede" href={site.redes.facebook.url} target="_blank" rel="noopener" aria-label={`Facebook da Adverts, ${site.redes.facebook.nome}`}>
-                <Icon name="facebook" size={18} /><span>{site.redes.facebook.nome}</span>
+                <Icon name="facebook" size={20} />
               </a>
             </li>
           )}
@@ -122,19 +122,16 @@ const empresa = [site.razaoSocial, site.cnpj && `CNPJ ${site.cnpj}`].filter(Bool
   }
   .footer ul { list-style: none; }
 
-  /* ---------- redes: pílulas com ícone e nome ---------- */
-  .footer__redes { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-6); }
+  /* ---------- redes: só os ícones, em círculos; no hover/foco ficam no amarelo da marca ---------- */
+  .footer__redes { display: flex; gap: var(--s-3); margin-top: var(--s-6); }
   .footer__rede {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-2);
-    min-height: 44px;
-    padding: 0 var(--s-4) 0 var(--s-3);
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
     border: 1px solid var(--line-2);
-    border-radius: var(--r-pill);
+    border-radius: 50%;
     color: var(--text);
-    font-size: 14px;
-    font-weight: 500;
     transition: color .25s ease, border-color .25s ease, background-color .25s ease, translate .35s var(--ease-out-expo);
   }
   .footer__rede:hover,
