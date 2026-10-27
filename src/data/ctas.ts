@@ -10,10 +10,9 @@ export const ctas = {
     texto: 'Quero escalar minha revenda',
     mensagem: 'Olá! Vim pelo site da Adverts e quero escalar minha revenda de software.',
   },
-  cta_case: {
+  cta_depoimento: {
     texto: 'Quero um resultado assim',
-    mensagem:
-      'Olá! Vi o case de R$ 1.500 para R$ 20.000 de MRR e quero entender como seria na minha revenda.',
+    mensagem: 'Olá! Vi o depoimento no site da Adverts e quero entender como seria na minha revenda.',
   },
   cta_processo: {
     texto: 'Começar pela conversa de triagem',
