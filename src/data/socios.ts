@@ -5,7 +5,7 @@ import fotoMatheus from '../assets/socios/matheus.jpg';
 import fotoGuilherme from '../assets/socios/guilherme.png';
 
 // Nomes completos informados pelo cliente em 28/09/2026.
-// [PROVISÓRIO] Textos de Guilherme e Matheus pendentes.
+// Textos de Guilherme e Matheus enviados pelo cliente (27/10/2026).
 // Sem `texto`, o card mostra só nome e função. Sem `foto`, mostra as iniciais.
 // Para adicionar a foto: salve em src/assets/socios/ (4:5) e importe aqui, ex.:
 //   import fotoBruno from '../assets/socios/bruno.jpg';  ...  foto: fotoBruno
@@ -29,6 +29,16 @@ export const socios: Socio[] = [
     texto: 'Começou como cliente da Adverts. Traz a experiência de vendas e o networking no mercado de software.',
     foto: fotoAriel,
   },
-  { nome: 'Guilherme Teodoro', funcao: 'Sócio', foto: fotoGuilherme },
-  { nome: 'Matheus Monticelli', funcao: 'Sócio', foto: fotoMatheus },
+  {
+    nome: 'Guilherme Teodoro',
+    funcao: 'Sócio',
+    texto: 'Soma 10 anos de vivência em vendas com a paixão pela tecnologia. É quem acelera resultados unindo inovação, integrações e novas ferramentas.',
+    foto: fotoGuilherme,
+  },
+  {
+    nome: 'Matheus Monticelli',
+    funcao: 'Sócio',
+    texto: 'Encontrou no universo do tráfego pago sua porta de entrada para o marketing digital. Entre campanhas, estratégias e novos desafios, atua com foco em gerar valor e impulsionar negócios.',
+    foto: fotoMatheus,
+  },
 ];

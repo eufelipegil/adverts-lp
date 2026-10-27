@@ -266,6 +266,14 @@ const iniciais = (nome: string) =>
   }
   .socio__texto-cel, .socios__dots { display: none; }
 
+  /* Notebook pequeno (4 colunas estreitas, card de ~220px): verso mais compacto para o texto caber inteiro */
+  @media (min-width: 960px) and (max-width: 1279px) {
+    .socio__verso { padding: var(--s-4); gap: var(--s-1); }
+    .socio__verso-nome { font-size: 21px; }
+    .socio__verso-funcao { font-size: 11px; }
+    .socio__verso .socio__texto { margin-top: var(--s-2); font-size: 13px; line-height: 1.4; }
+  }
+
   /*
     Celular: carrossel deslizante. Um sócio por vez, com o próximo aparecendo na borda.
     Foto com nome, função e texto embaixo; o card que vira fica só para tablet e desktop.
