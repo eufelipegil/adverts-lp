@@ -136,8 +136,8 @@ const linhas = (texto: string) => texto.split('\n');
   :global(.motion) .hero__texto > :nth-child(4) { animation-delay: .58s; }
   :global(.motion) .hero__texto > :nth-child(5) { animation-delay: .7s; }
   :global(.motion) .hero__midia { animation: hero-midia 2.2s var(--ease-out-expo) both; }
-  @keyframes hero-in { from { opacity: 0; translate: 0 48px; filter: blur(12px); } }
-  @keyframes hero-midia { from { opacity: 0; scale: 1.18; } }
+  @keyframes hero-in { from { opacity: .01; translate: 0 48px; filter: blur(12px); } }
+  @keyframes hero-midia { from { opacity: .01; scale: 1.18; } }
 
   /* primeira dobra de ponta a ponta no desktop */
   @media (min-width: 1024px) {
